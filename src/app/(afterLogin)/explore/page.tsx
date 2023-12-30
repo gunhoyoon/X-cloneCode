@@ -1,5 +1,5 @@
 import React from "react";
 
 export default function ExplorePage() {
-  return <div>ExplorePage</div>;
+  return <div>탐색페이지</div>;
 }

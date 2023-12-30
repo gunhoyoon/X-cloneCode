@@ -1,5 +1,5 @@
 import React from "react";
 
 export default function SearchPage() {
-  return <div>SearchPage</div>;
+  return <div>검색 페이지</div>;
 }

@@ -1,6 +1,6 @@
 import React from "react";
-import styles from "@/app/page.module.css";
-// styles import 해오는 주소 중 @ 은 src 를 의미함,
+import styles from "../(beforeLogin)/_component/main.module.css";
+
 type Props = {
   children: React.ReactNode;
   modal: React.ReactNode;
@@ -9,7 +9,6 @@ type Props = {
 export default function Layout({ children, modal }: Props) {
   return (
     <div className={styles.container}>
-      비포 로그인 레이아웃
       {children}
       {/* 같은 레벨의 page는 children 을 통해 보여지게 되고 */}
       {modal}
@@ -34,7 +33,7 @@ export default function Layout({ children, modal }: Props) {
 // 해당 layout에서의 children이 같은 레벨의 page가 되고,
 // 원래는 메인에서 /i/flow/login 을 하게 되며 기존에 가까운 경로인 i/flow/login 으로 넘어가게 되는데
 // 인터셉팅 라우팅 (.)i 를 통해서 modal안에 i/flow/login이 보여지게 됨
-// 근데? 이 login은 인터셉팅과 동시에 페러  렐(모달형태)임. 그렇기 때문에 경로가 바뀌면서도 메인페이지도 그대로 남아있고, 인터셉팅한 모달도 뜰 수 있는거임
+// 근데? 이 login은 인터셉팅과 동시에 페러렐(모달형태)임. 그렇기 때문에 경로가 바뀌면서도 메인페이지도 그대로 남아있고, 인터셉팅한 모달도 뜰 수 있는거임
 // 메인에서 로그인 클릭하면 /i/flow/login 으로 넘어와야하는데 이걸 (.)i 가 훔쳤음 그래서 지가 보여지고 얜 또 페러렐에 모달처럼 띄워놓은 애라 경로가 바뀌면서 메인페이지도 같이 보여지게 되는거임
 // 근데 이렇게 해서 이점이 뭐임?
 

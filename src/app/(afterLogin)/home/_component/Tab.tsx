@@ -9,10 +9,10 @@ export default function Tab() {
   const onClickFol = () => {
     setTab("fol");
   };
-  console.log(tab, "");
-  {
-    /* 기본적으로 둘 다 밑줄을 갖고 있는데 클릭된 친구 hidden true로 안보이게*/
-  }
+  // console.log(tab, "");
+
+  // 기본적으로 둘 다 밑줄을 갖고 있는데 클릭된 친구 hidden true로 안보이게
+
   return (
     <div className={styles.homeFixed}>
       <div className={styles.homeText}>홈</div>

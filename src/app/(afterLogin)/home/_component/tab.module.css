@@ -12,13 +12,16 @@
 
 .homeFixed {
   position: fixed;
+  z-index: 1;
   width: 598px;
-  background-color: rgba(255, 255, 255, 095);
+  background-color: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(12px);
   border-color: rgb(239, 243, 244);
   border-bottom-width: 1px;
   border-bottom-style: solid;
 }
+/*  background color 투명도 + 블러처리(흐리게 함) 흐리게하는 정도를 픽셀로 나타내는 듯 */
+/* z-index 1 는 게시하기 버튼의 z-index 이슈로 인해 줌 */
 .homeText {
   font-size: 20px;
   line-height: 24px;

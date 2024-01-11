@@ -4,7 +4,8 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import "dayjs/locale/ko";
 import ActionButtons from "@/app/(afterLogin)/_component/ActionButtons";
-
+import PostArticle from "./PostArticle";
+import faker from "@faker-js/faker";
 dayjs.locale("ko");
 // 한글 플러그인
 dayjs.extend(relativeTime);
@@ -14,6 +15,7 @@ dayjs.extend(relativeTime);
 
 export default function Post() {
   const target = {
+    postId: 1,
     User: {
       id: "elonmusk",
       nickname: "Elon Musk",
@@ -21,10 +23,21 @@ export default function Post() {
     },
     content: "클론코딩 라이브로 하니 너무 힘들어요 ㅠㅠ",
     createdAt: new Date(),
-    Images: [],
+    Images: [
+      {
+        imageId: 1,
+        link: faker,
+      },
+    ],
   };
   return (
-    <article className={style.post}>
+    <PostArticle post={target}>
+      {/* 기존의 article 을 클릭했을 때 상세 페이지로 이동해야하는데,
+      이걸 a 태그로 처리하지않고 클릭했을 때 이동하게끔 클라이언트로 처리해주고 있는데, 이거 하나때문에 post 전체를 client 컴포넌트로
+      바꾸는건 좀 그러니까 article만 클라이언트 컴포넌트로 바꿔줌 */}
+      {/* 클라이언트 컴포넌트가 부모고
+        서버 컴퍼넌트가 자식임
+        만약 클라이언트 컴포넌트 안에서 서버 컴포넌트를 import 해서 사용한다면, 서버 컴포넌트의 성격이 클라이언트 컴포넌트로 바뀌어버림 */}
       <div className={style.postWrapper}>
         <div className={style.postUserSection}>
           <Link href={`/${target.User.id}`} className={style.postUserImage}>
@@ -50,6 +63,6 @@ export default function Post() {
           <ActionButtons />
         </div>
       </div>
-    </article>
+    </PostArticle>
   );
 }

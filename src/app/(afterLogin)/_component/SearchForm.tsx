@@ -1,6 +1,9 @@
 import React from "react";
 import styles from "./searchForm.module.css";
-export default function SearchForm() {
+type Props = {
+  q?: string;
+};
+export default function SearchForm({ q }: Props) {
   return (
     <form action="" className={styles.search}>
       <svg width={20} viewBox="0 0 24 24" aria-hidden="true">

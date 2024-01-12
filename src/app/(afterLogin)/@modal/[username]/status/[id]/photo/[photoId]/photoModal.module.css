@@ -1,0 +1,67 @@
+.container {
+  background-color: rgba(0, 0, 0, 0.95);
+  position: fixed;
+  z-index: 10;
+  left: 0;
+  top: 0;
+  width: 100dvw;
+  height: 100dvh;
+  display: flex;
+  flex-direction: row;
+}
+
+.imageZone {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.imageZone .image {
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  flex: 1;
+}
+.imageZone img {
+  display: none;
+}
+
+.buttonZone {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+.buttonInner {
+  width: 600px;
+  height: 60px;
+}
+
+.commentZone {
+  width: 350px;
+  background-color: white;
+  border-left: 1px solid rgb(239, 243, 244);
+  overflow: auto;
+}
+/* 이미지 너비는 flex 1 로 꽉차게 처리하고 오른쪽 댓글창은 width 350주고, 댓글이 계속 달려서 밑으로 길어질 수 있기때문에
+    overflow : auto 줘서 스크롤 생기게 함 */
+
+.closeButton {
+  width: 34px;
+  height: 34px;
+  border-radius: 17px;
+  border: none;
+  cursor: pointer;
+  background-color: rgba(0, 0, 0, 0.75);
+  position: absolute;
+  left: 16px;
+  top: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.closeButton svg {
+  fill: white;
+}
+.closeButton:hover {
+  background-color: rgba(25, 25, 25, 0.75);
+}

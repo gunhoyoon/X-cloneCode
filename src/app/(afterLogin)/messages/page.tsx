@@ -1,5 +1,18 @@
-import React from "react";
+import style from "./messages.module.css";
+import Room from "@/app/(afterLogin)/messages/_component/Room";
 
-export default function MessagesPage() {
-  return <div>쪽지 페이지</div>;
+export default function Home() {
+  return (
+    <main className={style.main}>
+      <div className={style.header}>
+        <h3>쪽지</h3>
+      </div>
+      <Room />
+      <Room />
+      <Room />
+      <Room />
+      <Room />
+      <Room />
+    </main>
+  );
 }

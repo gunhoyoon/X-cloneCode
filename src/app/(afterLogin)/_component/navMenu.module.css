@@ -8,9 +8,16 @@
   background-color: rgba(15, 20, 25, 0.1);
   border-radius: 29px;
 }
-/* navPill 안에 있는 직계 div만 */
+
 .navPill > div {
-  margin-left: 20px;
-  margin-right: 16px;
-  font-size: 20px;
+  display: none;
+}
+
+@media all and (min-width: 1300px) {
+  .navPill > div {
+    margin-left: 20px;
+    margin-right: 16px;
+    font-size: 20px;
+    display: inline-block;
+  }
 }

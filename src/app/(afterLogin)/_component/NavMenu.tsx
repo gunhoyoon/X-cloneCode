@@ -26,7 +26,6 @@ export default function NavMenu() {
     <>
       <li>
         <Link href="/home">
-          {/* 경로 바꾸고 조건부 렌더링 */}
           <div className={style.navPill}>
             {segment === "home" ? (
               <>

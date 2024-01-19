@@ -1,7 +1,8 @@
 "use client";
 
-import style from "@/app/(afterLogin)/[username]/profile.module.css";
+import style from "@/app/(beforeLogin)/_component/signup.module.css";
 import { useRouter } from "next/navigation";
+
 export default function BackButton() {
   const router = useRouter();
   const onClickClose = () => {

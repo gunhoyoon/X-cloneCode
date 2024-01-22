@@ -19,7 +19,6 @@ export default async (prevState: any, formData: FormData) => {
   if (!formData.get("image")) {
     return { message: "no_image" };
   }
-  formData.set("nickname", formData.get("name") as string);
   let shouldRedirect = false;
   try {
     const response = await fetch(
@@ -40,14 +39,13 @@ export default async (prevState: any, formData: FormData) => {
       username: formData.get("id"),
       password: formData.get("password"),
       redirect: false,
-    });
+    }); // 회원가입 성공하고 난 뒤에 로그인 바로 시켜줄거임. 그리고 home 으로 redirect 시킴
   } catch (err) {
     console.error(err);
-    return { message: null };
+    return;
   }
 
   if (shouldRedirect) {
     redirect("/home"); // try/catch문 안에서 X
   }
-  return { message: null };
 };

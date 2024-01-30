@@ -17,13 +17,14 @@ function RQProvider({ children }: Props) {
       defaultOptions: {
         // react-query 전역 설정
         queries: {
-          refetchOnWindowFocus: false,
-          retryOnMount: true,
-          refetchOnReconnect: false,
-          retry: false,
+          refetchOnWindowFocus: false, // 탭 전환했다가 페이지 접근 시 데이터를 새로 가져오겠다. false
+          retryOnMount: true, // 컴포넌트가 언 마운트 됐다가 다시 마운트됐을 때, 컴포넌트 페이지 이동 / 스테이트때문에 언마운트 됐다가 다시 마운트 됐다면, 페이지 이동하면서
+          // 홈 컴포넌트가 다시 마운트 됐을 때, 데이터를 다시 가져오게 됨
+          refetchOnReconnect: false, // 인터넷 연결이 끊어졌다 다시 연결됐을 때, 데이터를 새로 받아올지 말지
+          retry: false, // 데이터를 가져오다 실패했다면, 몇 번 정도 다시 가져올 수 있는 옵션, 실패시 에러페이지 처리해줄거임
         },
       },
-    })
+    }) // 리액트 쿼리의 경우 데이터를 기본적으로 fresh 라고 처리하지 않음. 이건 코드상에서 개발자가 개인적으로 처리해줘야함
   );
   // 위에서 만든 client를 넣어서 공유할 수 있게 됨
   return (

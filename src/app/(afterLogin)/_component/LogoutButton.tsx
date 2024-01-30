@@ -5,7 +5,7 @@ import style from "./logoutButton.module.css";
 export default function LogoutButton() {
   const router = useRouter();
   const { data: me } = useSession(); // 클라이언트에서 useSession 사용해서 내 정보 불러오기
-  console.log(me, "me");
+  // console.log(me, "me");
   // 반환값 : user = {email : YunGunHo , image : "/5Udwvqim.jpg", name "윤건호"}
 
   const onLogOut = () => {

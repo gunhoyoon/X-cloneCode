@@ -45,7 +45,7 @@ export const {
         // 여기까진 기존에 우리가 설정한 nickname 이름으로 데이터가 들어오지만 next auth 에서 지원하는 이름은 name이기 때문에,
         // 데이터를 받을 때 까진 nickname 으로 들어오지만 return 값에서 이름을 name으로 바꿔줌, email 도 마찬가지임, 나머지는 그대로 쓰겠다.
         // id를 email 이라는 키로 쓰는 이유는 nextauth에서 기본적으로 지정해둔 키값이 아니면 다 무시해버리기때문이다
-        console.log("user", user);
+        // console.log("user", user);
         return {
           email: user.id,
           name: user.nickname,

@@ -5,8 +5,9 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import "dayjs/locale/ko";
 import ActionButtons from "@/app/(afterLogin)/_component/ActionButtons";
 import PostArticle from "./PostArticle";
-import { faker } from "@faker-js/faker";
+import { faker, NumberModule } from "@faker-js/faker";
 import PostImages from "./PostImages";
+import { Post } from "@/model/Post";
 dayjs.locale("ko");
 // 한글 플러그인
 dayjs.extend(relativeTime);
@@ -16,22 +17,24 @@ dayjs.extend(relativeTime);
 
 type Props = {
   noImage?: boolean;
+  post: Post;
 };
 
-export default function Post({ noImage }: Props) {
-  const target = {
-    postId: 1,
-    User: {
-      id: "elonmusk",
-      nickname: "Elon Musk",
-      image: "/yRsRRjGO.jpg",
-    },
-    content: "클론코딩 라이브로 하니 너무 힘들어요 ㅠㅠ",
-    createdAt: new Date(),
-    Images: [] as any[],
-  };
+export default function Post({ noImage, post }: Props) {
+  // const target = {
+  //   postId: 1,
+  //   User: {
+  //     id: "elonmusk",
+  //     nickname: "Elon Musk",
+  //     image: "/yRsRRjGO.jpg",
+  //   },
+  //   content: "클론코딩 라이브로 하니 너무 힘들어요 ㅠㅠ",
+  //   createdAt: new Date(),
+  //   Images: [] as any[],
+  // };
   // faker -> 랜덤으로 이미지를 생성해주는 라이브러리로 쓰고 있음.
   //
+  const target = post;
   if (Math.random() > 0.5 && !noImage) {
     target.Images.push(
       { imageId: 1, link: faker.image.urlLoremFlickr() },

@@ -67,16 +67,16 @@ export const handlers = [
     const cursor = parseInt(url.searchParams.get("cursor") as string) || 0;
     return HttpResponse.json([
       {
-        postId: cursor + 1,
+        postId: 1,
         User: User[0],
-        content: `${cursor + 1} Z.com is so marvelous. I'm gonna buy that.`,
+        content: `${1} Z.com is so marvelous. I'm gonna buy that.`,
         Images: [{ imageId: 1, link: faker.image.urlLoremFlickr() }],
         createdAt: generateDate(),
       },
       {
-        postId: cursor + 2,
+        postId: 2,
         User: User[0],
-        content: `${cursor + 2} Z.com is so marvelous. I'm gonna buy that.`,
+        content: `${2} Z.com is so marvelous. I'm gonna buy that.`,
         Images: [
           { imageId: 1, link: faker.image.urlLoremFlickr() },
           { imageId: 2, link: faker.image.urlLoremFlickr() },
@@ -84,16 +84,16 @@ export const handlers = [
         createdAt: generateDate(),
       },
       {
-        postId: cursor + 3,
+        postId: 3,
         User: User[0],
-        content: `${cursor + 3} Z.com is so marvelous. I'm gonna buy that.`,
+        content: `${3} Z.com is so marvelous. I'm gonna buy that.`,
         Images: [],
         createdAt: generateDate(),
       },
       {
-        postId: cursor + 4,
+        postId: 4,
         User: User[0],
-        content: `${cursor + 4} Z.com is so marvelous. I'm gonna buy that.`,
+        content: `${4} Z.com is so marvelous. I'm gonna buy that.`,
         Images: [
           { imageId: 1, link: faker.image.urlLoremFlickr() },
           { imageId: 2, link: faker.image.urlLoremFlickr() },
@@ -103,9 +103,121 @@ export const handlers = [
         createdAt: generateDate(),
       },
       {
-        postId: cursor + 5,
+        postId: 5,
         User: User[0],
-        content: `${cursor + 5} Z.com is so marvelous. I'm gonna buy that.`,
+        content: `${5} Z.com is so marvelous. I'm gonna buy that.`,
+        Images: [
+          { imageId: 1, link: faker.image.urlLoremFlickr() },
+          { imageId: 2, link: faker.image.urlLoremFlickr() },
+          { imageId: 3, link: faker.image.urlLoremFlickr() },
+        ],
+        createdAt: generateDate(),
+      },
+    ]);
+  }),
+  http.get("/api/followingPosts", async ({ request }) => {
+    await delay(3000);
+    const url = new URL(request.url);
+    const cursor = parseInt(url.searchParams.get("cursor") as string) || 0;
+    return HttpResponse.json([
+      {
+        postId: 1,
+        User: User[0],
+        content: `${1} Stop following me. I' m too famous.`,
+        Images: [{ imageId: 1, link: faker.image.urlLoremFlickr() }],
+        createdAt: generateDate(),
+      },
+      {
+        postId: 2,
+        User: User[0],
+        content: `${2} Stop following me. I' m too famous.`,
+        Images: [
+          { imageId: 1, link: faker.image.urlLoremFlickr() },
+          { imageId: 2, link: faker.image.urlLoremFlickr() },
+        ],
+        createdAt: generateDate(),
+      },
+      {
+        postId: 3,
+        User: User[0],
+        content: `${3} Stop following me. I' m too famous.`,
+        Images: [],
+        createdAt: generateDate(),
+      },
+      {
+        postId: 4,
+        User: User[0],
+        content: `${4} Stop following me. I' m too famous.`,
+        Images: [
+          { imageId: 1, link: faker.image.urlLoremFlickr() },
+          { imageId: 2, link: faker.image.urlLoremFlickr() },
+          { imageId: 3, link: faker.image.urlLoremFlickr() },
+          { imageId: 4, link: faker.image.urlLoremFlickr() },
+        ],
+        createdAt: generateDate(),
+      },
+      {
+        postId: 5,
+        User: User[0],
+        content: `${5} Stop following me. I' m too famous.`,
+        Images: [
+          { imageId: 1, link: faker.image.urlLoremFlickr() },
+          { imageId: 2, link: faker.image.urlLoremFlickr() },
+          { imageId: 3, link: faker.image.urlLoremFlickr() },
+        ],
+        createdAt: generateDate(),
+      },
+    ]);
+  }),
+  // :tag의 경우 url 파라미터로 언제든 바뀔 수 있는 값임
+
+  http.get("/api/search/:tag", async ({ request, params }) => {
+    const { tag } = params;
+    //지금 :tag이기때문에 params.tag 로 접근하는거임, :tag의 값이  params: {tag : 여기로 들어옴};
+    await delay(3000);
+    const url = new URL(request.url);
+    const cursor = parseInt(url.searchParams.get("cursor") as string) || 0;
+    return HttpResponse.json([
+      {
+        postId: 1,
+        User: User[0],
+        content: `${1} 검색결과 ${tag}`,
+        Images: [{ imageId: 1, link: faker.image.urlLoremFlickr() }],
+        createdAt: generateDate(),
+      },
+      {
+        postId: 2,
+        User: User[0],
+        content: `${2} 검색결과 ${tag}`,
+        Images: [
+          { imageId: 1, link: faker.image.urlLoremFlickr() },
+          { imageId: 2, link: faker.image.urlLoremFlickr() },
+        ],
+        createdAt: generateDate(),
+      },
+      {
+        postId: 3,
+        User: User[0],
+        content: `${3} 검색결과 ${tag}`,
+        Images: [],
+        createdAt: generateDate(),
+      },
+      {
+        postId: 4,
+        User: User[0],
+        content: `${4} 검색결과 ${tag}`,
+        Images: [
+          { imageId: 1, link: faker.image.urlLoremFlickr() },
+          { imageId: 2, link: faker.image.urlLoremFlickr() },
+          { imageId: 3, link: faker.image.urlLoremFlickr() },
+          { imageId: 4, link: faker.image.urlLoremFlickr() },
+        ],
+        createdAt: generateDate(),
+      },
+      {
+        postId: 5,
+        User: User[0],
+        content: `${5} 검색결과 ${tag}`,
         Images: [
           { imageId: 1, link: faker.image.urlLoremFlickr() },
           { imageId: 2, link: faker.image.urlLoremFlickr() },

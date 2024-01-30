@@ -1,15 +1,16 @@
 "use client";
-import React, { useState } from "react";
+import React, { useContext } from "react";
 import styles from "./tab.module.css";
+import { TabContext } from "./TabProvider";
 export default function Tab() {
-  const [tab, setTab] = useState("rec");
+  const { tab, setTab } = useContext(TabContext);
   const onClickRec = () => {
     setTab("rec");
   };
   const onClickFol = () => {
     setTab("fol");
   };
-  // console.log(tab, "");
+  // useState로 탭의 상태를 갖고 있는게 아니라, useContext에서 provider로 넘긴 useState의 tab , setTab을 업데이트 해줌, 그럼 탭 프로바이더로 감싼 컴포넌트들의 tab 상태는 다 바뀌는거임?
 
   // 기본적으로 둘 다 밑줄을 갖고 있는데 클릭된 친구 hidden true로 안보이게
 

@@ -6,7 +6,7 @@ export const TabContext = createContext({
   setTab: (value: "rec" | "fol") => {},
 });
 // context 초기값, 명확하게 들어갈수록 좋을듯 타입 정의할 때도
-
+// TabContext = useContext에 들어갈 값
 type Props = {
   children: ReactNode;
 };
@@ -19,8 +19,7 @@ export default function TabProvider({ children }: Props) {
     </TabContext.Provider>
   );
 }
+//
 
 // 탭의 상태를 가지고 있어야하는데 여기서 context api로
 // 텝 컴포넌트에서 직접 프로바이더를 가지고 있을 것임
-// 탭 , 포스트 폼 , 포스트를 감싸서 해당 상태를 전달해줄거임
-//

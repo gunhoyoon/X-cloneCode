@@ -13,3 +13,4 @@ export async function getPostRecommends() {
   return res.json();
   // 파싱한 데이터 반환
 }
+// 서버에서 자동으로 캐싱하게 됨

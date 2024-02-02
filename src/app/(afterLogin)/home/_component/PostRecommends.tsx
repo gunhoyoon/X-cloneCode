@@ -15,6 +15,7 @@ export default function PostRecommends() {
     // 가비지 컬렉터 타임 기본값 5분
     // initialData: () => [], reset은 데이터의 initialData(초기 데이터)가 있을 수도 있는 상태에서 reset을 하게 되면, 초기 상태로 리셋이 됨, 초기 상태가 없을 경우 데이터를 다시 가져옴
   });
+  // 서버 컴포넌트에서 요청한 데이터를 클라이언트에서 똑같이 요청하는 이유는 사용자와의 상호작용에서 필요한 데이터를 보여주기 위함임(쉽게 말하면 탭이 클릭됐을 때 데이터를 요청해서 보여줘야하니까.)
   if (isLoading) {
     return <div>loading ...</div>;
   }

@@ -19,7 +19,6 @@ export default function TabProvider({ children }: Props) {
     </TabContext.Provider>
   );
 }
-//
 
 // 탭의 상태를 가지고 있어야하는데 여기서 context api로
 // 텝 컴포넌트에서 직접 프로바이더를 가지고 있을 것임

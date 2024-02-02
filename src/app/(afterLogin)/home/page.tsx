@@ -2,25 +2,55 @@ import {
   dehydrate,
   HydrationBoundary,
   QueryClient,
+  useQueryClient,
 } from "@tanstack/react-query";
+import { revalidateTag } from "next/cache";
 import React from "react";
 import styles from "./home.module.css";
 import PostForm from "./_component/PostForm";
-import PostRecommends from "./_component/PostRecommends";
 import Tab from "./_component/Tab";
 import TabDecider from "./_component/TabDecider";
 import TabProvider from "./_component/TabProvider";
 import { getPostRecommends } from "./_lib/getPostRecommends";
 
-export default async function HomePage() {
+// export async function getPostRecommends() {
+//   const res = await fetch(`http://localhost:9090/api/postRecommends`, {
+//     next: {
+//       tags: ["posts", "recommends"],
+//     },
+//     cache: "no-store",
+//     // 캐시를 너무 오래해놓으면 새로운 데이터가 안불러와지니까, 적당히 업데이트할 수 있게 설정해둠
+//   });
+
+//   if (!res.ok) {
+//     throw new Error("Failed to fetch data");
+//   }
+//   // 응답 유효성 검사
+
+//   revalidateTag("recommends");
+//   // 이 요청을 보내게되면, 서버에 있는 캐시가 날라감, 그럼 위 요청을 다시 하게 되면 새로운 데이터를 가져오게 됨
+//   return res.json();
+// }
+// 해당 함수는 서버컴포넌트이기 때문에 서버에서 실행이 된다.
+// 서버에선 http://localhost:9090/api/postRecommends 주소를 통해 받아온 데이터를 서버에 자동으로 저장(캐싱)을 함
+
+export default async function HomePage({}) {
   const queryClient = new QueryClient();
 
+  // 서버에서 불러온 데이터를 client의 react query가 물려받는다. 하이드레이트 한다?
+  // 초기로드 시 react server에서 서버 측 리소스(파일 시스템,데이터베이스) 와 같은 곳에 접근을 해서 처리한 후
+  // 데이터를 react 트리로 보내게 된다. 이를 통해 리액트 컴포넌트가 html로 렌더링되어 초기 페이지 로드시 사용되며
+  // 클라이언트 측 코드에도 포함되어 상호작용을 위한 스크립트로 사용된다.
   await queryClient.prefetchQuery({
     queryKey: ["posts", "recommends"],
+    // queryKey를 ["posts", "recommends"] 를 갖고 있는 애일땐 항상 getPostRecommends함수를 실행해라
+    // 키가 문자열이 아니라,  ["posts", "recommends"] 의 형태인게 특징임
     queryFn: getPostRecommends,
   });
-
+  // 해당 데이터가 초기에 서버에서 처리되고, 초기 페이지 로드시 클라이언트에 전달되어 초기 렌더링을 빠르게 할 수 있다.
+  // getPostRecommends함수를 통해 데이터를 불러오고나면 dehydrateState 를 react query가 hydration을 해야됨
   const dehydrateState = dehydrate(queryClient);
+  // 위 데이터를 불러오고 싶으면
   // queryClient.getQueryData(["posts", "recommend"]); HydrationBoundary안에 있는 컴포넌트들에선 이런식으로 데이터를 불러 사용할 수 있다.
 
   return (

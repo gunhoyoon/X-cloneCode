@@ -6,7 +6,7 @@ export const getSearchResult: QueryFunction<
   [_1: string, _2: string, searchParams: { q: string; pf?: string; f?: string }]
 > = async ({ queryKey }) => {
   const [_1, _2, searchParams] = queryKey;
-  // getSearchResult 에 들어온 queryKey 받아서 구조분해할당한거,
+  // getSearchResult 에 들어온 queryKey 받아서 구조분해할당한거, searchParams.q만 따로 사용하려고
   const res = await fetch(
     `http://localhost:9090/api/search/${
       searchParams.q

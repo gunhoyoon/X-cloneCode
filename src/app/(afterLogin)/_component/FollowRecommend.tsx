@@ -1,22 +1,19 @@
 "use client";
+import { User } from "@/model/User";
 import React from "react";
 import styles from "./FollowRecommend.module.css";
-import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
 
-export default function FollowRecommend() {
-  const route = useRouter();
-  const { data } = useSession();
-  const onFollow = () => {
-    if (!data?.user) {
-      route.replace("/login");
-    }
-  };
-  const user = {
-    id: "elonMusk",
-    nickname: "Elon Musk",
-    image: "/yRsRRjGO.jpg",
-  };
+type Props = {
+  user: User;
+};
+
+export default function FollowRecommend({ user }: Props) {
+  const onFollow = () => {};
+  // const user = {
+  //   id: "elonMusk",
+  //   nickname: "Elon Musk",
+  //   image: "/yRsRRjGO.jpg",
+  // };
   return (
     <div className={styles.container}>
       <div className={styles.userLogoSection}>

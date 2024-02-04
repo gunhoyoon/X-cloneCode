@@ -4,6 +4,8 @@ import styles from "./tab.module.css";
 import { TabContext } from "./TabProvider";
 export default function Tab() {
   const { tab, setTab } = useContext(TabContext);
+  // useState가 아니라 context api 로 만들어둔 탭의 상태를 가져와서, setTab 으로 Tab의 상태를 바꿔줌
+  // 해당 컴포넌트에서는 탭의 값을 업데이트해주고, 그에 따른 탭 ui만 바꿔주면 됨
   const onClickRec = () => {
     setTab("rec");
   };

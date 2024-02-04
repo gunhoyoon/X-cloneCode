@@ -19,10 +19,15 @@ export default function PostRecommends() {
   if (isLoading) {
     return <div>loading ...</div>;
   }
-  console.log(data, "data");
-  return data
-    ? data?.map((post) => <Post key={post.postId} post={post} />)
-    : null;
+  // console.log(data, "data");
+
+  return (
+    <>
+      {data?.map((post) => (
+        <Post key={post.postId} post={post} />
+      ))}
+    </>
+  );
 }
 
 // type Post 를 가져왔지만, component Post랑 겹치기 때문에 에러가 발생함, 그래서 이름 바꿔줌 IPost에서 I는 interface 라는 뜻

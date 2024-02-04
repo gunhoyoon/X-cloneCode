@@ -16,5 +16,11 @@ export default function FollowingPosts() {
     // initialData: () => [], reset은 데이터의 initialData(초기 데이터)가 있을 수도 있는 상태에서 reset을 하게 되면, 초기 상태로 리셋이 됨, 초기 상태가 없을 경우 데이터를 다시 가져옴
   });
   console.log(data, "data");
-  return data?.map((post) => <Post key={post.postId} post={post} />);
+  return (
+    <>
+      {data?.map((post) => (
+        <Post key={post.postId} post={post} />
+      ))}
+    </>
+  );
 }

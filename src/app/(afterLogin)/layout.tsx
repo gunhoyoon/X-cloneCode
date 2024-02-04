@@ -10,6 +10,7 @@ import FollowRecommend from "./_component/FollowRecommend";
 import RightSearchZone from "./_component/RightSearchZone";
 import { auth } from "@/auth";
 import RQProvider from "./_component/RQProvider";
+import FollowRecommendsSection from "./home/_component/FollowRecommendsSection";
 type Props = {
   children: React.ReactNode;
   modal: React.ReactNode;
@@ -62,9 +63,12 @@ export default async function AfterLoginLayout({ children, modal }: Props) {
               <TrendSection />
               <div className={styles.followRecommend}>
                 <h3>팔로우 추천</h3>
-                <FollowRecommend />
-                <FollowRecommend />
-                <FollowRecommend />
+                <FollowRecommendsSection />
+                {/* <FollowRecommend /> */}
+                {/* <FollowRecommend /> */}
+                {/* <FollowRecommend /> */}
+                {/* useQuery 를 쓰기 위해서 분리를 해줌 followRecommend Section을 만들어줌 
+                기존 FollowRecommend, FollowRecommend 를 여러개 사용할게 아니기 때문에, 데이터만큼 컴포넌트 map 으로 표시 */}
               </div>
             </section>
           </div>

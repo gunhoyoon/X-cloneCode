@@ -36,6 +36,7 @@ import { getPostRecommends } from "./_lib/getPostRecommends";
 
 export default async function HomePage({}) {
   const queryClient = new QueryClient();
+  // 지금 new QueryClient를 사용한 부분이 서버사이드 렌더링을 위해서 서버상에서 먼저 데이터를 요청하는 것
 
   // 서버에서 불러온 데이터를 client의 react query가 물려받는다. 하이드레이트 한다?
   // 초기로드 시 react server에서 서버 측 리소스(파일 시스템,데이터베이스) 와 같은 곳에 접근을 해서 처리한 후

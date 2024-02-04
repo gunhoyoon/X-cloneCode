@@ -11,7 +11,7 @@ function generateDate() {
 }
 const User = [
   { id: "elonmusk", nickname: "Elon Musk", image: "/yRsRRjGO.jpg" },
-  { id: "zerohch0", nickname: "제로초", image: "/5Udwvqim.jpg" },
+  { id: "gunho", nickname: "윤건호", image: "/5Udwvqim.jpg" },
   { id: "leoturtle", nickname: "레오", image: faker.image.avatar() },
 ];
 const Posts = [];
@@ -172,6 +172,7 @@ export const handlers = [
   // :tag의 경우 url 파라미터로 언제든 바뀔 수 있는 값임
 
   http.get("/api/search/:tag", async ({ request, params }) => {
+    // /api/search/:tag의 부분이, getSearchResult에서 /api/search/${searchParams.q}의 부분이 params로 들어오게 됨
     const { tag } = params;
     //지금 :tag이기때문에 params.tag 로 접근하는거임, :tag의 값이  params: {tag : 여기로 들어옴};
     const url = new URL(request.url);
@@ -226,9 +227,24 @@ export const handlers = [
       },
     ]);
   }),
+  http.get("/api/users/:userId", ({ request, params }) => {
+    // 특정 사용자의 관한
+    const { userId } = params;
+    const found = User.find((v) => v.id === userId);
+    if (found) {
+      return HttpResponse.json(found);
+    }
+    return HttpResponse.json(
+      { message: "no_such_user" },
+      {
+        status: 404,
+      }
+    );
+  }),
   http.get("/api/users/:userId/posts", async ({ request, params }) => {
     const { userId } = params;
-
+    // 전달받을만한건 userId 정도, params로 전달받아서 사용
+    // 특정 사용자의 게시글 + 내 글도 될 수 있음. 쉽게 말해 어떤 유저의 아이디는 전부 다이나믹하게 처리 답글도 마찬가지
     await delay(3000);
     const url = new URL(request.url);
     const cursor = parseInt(url.searchParams.get("cursor") as string) || 0;

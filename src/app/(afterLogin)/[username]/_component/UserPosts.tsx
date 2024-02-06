@@ -29,13 +29,15 @@ export default function UserPosts({ username }: Props) {
   // useQuery 다 연결되어있으니까, 이런식으로 키값을 넣어서 user에 관한 정보를 가져올 수 있음
   // 데이터가 없을 때, handlers에서 404 + error message 내줌
   //   console.log("user", user);
+
   if (user) {
     return (
       <>
         {data?.map((post) => (
-          <Post post={post} key={post.postId} />
+          <Post key={post.postId} post={post} />
         ))}
       </>
     );
   }
+  return null;
 }

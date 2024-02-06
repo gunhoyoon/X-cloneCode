@@ -9,7 +9,6 @@ import style from "./navMenu.module.css";
 
 export default function NavMenu() {
   const segment = useSelectedLayoutSegment();
-  console.log(segment, " : segment");
   // nextjs에서 제공해주는 useSelectedLayoutSegment 를 사용하게 되면
   // 현재 내가 있는 경로의 최상위 폴더이름을 반환해줌.
   // ex) /home > home , /compose/tweet > compose

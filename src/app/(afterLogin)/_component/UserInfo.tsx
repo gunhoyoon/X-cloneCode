@@ -24,6 +24,7 @@ export default function UserInfo({ username }: Props) {
       gcTime: 300 * 1000,
     }
   );
+  //   console.dir(error); 에러는 객체 형태/ 상세하게 보기 위해서 dir 찍음(디렉토리)
   if (error) {
     return (
       <>

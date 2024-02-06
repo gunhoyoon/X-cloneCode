@@ -5,7 +5,7 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import "dayjs/locale/ko";
 import ActionButtons from "@/app/(afterLogin)/_component/ActionButtons";
 import PostArticle from "./PostArticle";
-import { faker, NumberModule } from "@faker-js/faker";
+import { faker } from "@faker-js/faker";
 import PostImages from "./PostImages";
 import { Post } from "@/model/Post";
 dayjs.locale("ko");
@@ -21,42 +21,13 @@ type Props = {
 };
 
 export default function Post({ noImage, post }: Props) {
-  // const target = {
-  //   postId: 1,
-  //   User: {
-  //     id: "elonmusk",
-  //     nickname: "Elon Musk",
-  //     image: "/yRsRRjGO.jpg",
-  //   },
-  //   content: "클론코딩 라이브로 하니 너무 힘들어요 ㅠㅠ",
-  //   createdAt: new Date(),
-  //   Images: [] as any[],
-  // };
-  // faker -> 랜덤으로 이미지를 생성해주는 라이브러리로 쓰고 있음.
-  //
   const target = post;
-  if (Math.random() > 0.5 && !noImage) {
-    target.Images.push(
-      { imageId: 1, link: faker.image.urlLoremFlickr() },
-      { imageId: 2, link: faker.image.urlLoremFlickr() },
-      { imageId: 3, link: faker.image.urlLoremFlickr() },
-      { imageId: 4, link: faker.image.urlLoremFlickr() }
-    );
-  }
-  // math.random 이 0~1 사이의 소수점을 랜덤으로 뽑아내는 함수인데, 0.5보다 클 확률은 역시 반반이겠지
-  // 근데 반반확률로 이미지를 추가하고 말고 를 정하는 코드인데 왜 굳이 .. ? 아아 글 올린 사람에 따라 이미지를 올릴수도 안올릴수도 있으니까~!
+
   return (
     <PostArticle post={target}>
-      {/* 기존의 article 을 클릭했을 때 상세 페이지로 이동해야하는데,
-      이걸 a 태그로 처리하지않고 클릭했을 때 이동하게끔 클라이언트로 처리해주고 있는데, 이거 하나때문에 post 전체를 client 컴포넌트로
-      바꾸는건 좀 그러니까 article만 클라이언트 컴포넌트로 바꿔줌 */}
-      {/* 클라이언트 컴포넌트가 부모고
-        서버 컴퍼넌트가 자식임
-        만약 클라이언트 컴포넌트 안에서 서버 컴포넌트를 import 해서 사용한다면, 서버 컴포넌트의 성격이 클라이언트 컴포넌트로 바뀌어버림 */}
       <div className={style.postWrapper}>
         <div className={style.postUserSection}>
           <Link href={`/${target.User.id}`} className={style.postUserImage}>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={target.User.image} alt={target.User.nickname} />
             <div className={style.postShade} />
           </Link>
@@ -66,7 +37,6 @@ export default function Post({ noImage, post }: Props) {
             <Link href={`/${target.User.id}`}>
               <span className={style.postUserName}>{target.User.nickname}</span>
               &nbsp;
-              {/* 공백 정규 표현식 */}
               <span className={style.postUserId}>@{target.User.id}</span>
               &nbsp; · &nbsp;
             </Link>
@@ -75,9 +45,11 @@ export default function Post({ noImage, post }: Props) {
             </span>
           </div>
           <div>{target.content}</div>
-          <div className={style.postImageSection}>
-            <PostImages post={target} />
-          </div>
+          {!noImage && (
+            <div>
+              <PostImages post={target} />
+            </div>
+          )}
           <ActionButtons />
         </div>
       </div>

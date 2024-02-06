@@ -44,4 +44,4 @@ export default function Default() {
     </div>
   );
 }
-// 이미지 클릭 시 보여질 모달
+// 포스트 이미지 클릭 시 보여질 모달

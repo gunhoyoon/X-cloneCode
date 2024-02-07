@@ -5,7 +5,6 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import "dayjs/locale/ko";
 import ActionButtons from "@/app/(afterLogin)/_component/ActionButtons";
 import PostArticle from "./PostArticle";
-import { faker } from "@faker-js/faker";
 import PostImages from "./PostImages";
 import { Post } from "@/model/Post";
 dayjs.locale("ko");

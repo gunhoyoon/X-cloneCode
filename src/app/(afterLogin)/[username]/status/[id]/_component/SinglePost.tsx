@@ -7,14 +7,15 @@ import Post from "../../../../_component/Post";
 import styles from "../../../../[username]/profile.module.css";
 type Props = {
   id: string;
+  noImage?: boolean;
 };
 
-export default function SinglePost({ id }: Props) {
+export default function SinglePost({ id, noImage }: Props) {
   const { data: post, error } = useQuery<
     IPost,
     Object,
     IPost,
-    [_1: string, _2: string] // queryKey에 관한 타입
+    [_1: "posts", _2: string] // queryKey에 관한 타입
   >({
     queryKey: ["posts", id],
     queryFn: getSinglePost,
@@ -31,5 +32,5 @@ export default function SinglePost({ id }: Props) {
     return null;
   }
 
-  return <Post key={post.postId} post={post} />;
+  return <Post key={post.postId} post={post} noImage={noImage} />;
 }

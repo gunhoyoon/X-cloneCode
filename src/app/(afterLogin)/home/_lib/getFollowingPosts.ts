@@ -3,7 +3,8 @@ export async function getFollowignPosts() {
     next: {
       tags: ["posts", "followings"],
     },
-    cache: "no-store", // 해당 next : {tags}와 cache 부분은 리액트 쿼리에서 하는게 아니라, nextjs 에서 제공하는 서버쪽 캐싱임. 우선 이 정도만
+    // cache: "no-store",
+    // 해당 next : {tags}와 cache 부분은 리액트 쿼리에서 하는게 아니라, nextjs 에서 제공하는 서버쪽 캐싱임. 우선 이 정도만
   });
 
   if (!res.ok) {

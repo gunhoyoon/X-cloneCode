@@ -11,7 +11,7 @@ function generateDate() {
 }
 const User = [
   { id: "elonmusk", nickname: "Elon Musk", image: "/yRsRRjGO.jpg" },
-  { id: "zerohch0", nickname: "제로초", image: "/5Udwvqim.jpg" },
+  { id: "Yungunho", nickname: "윤건호", image: "/5Udwvqim.jpg" },
   { id: "leoturtle", nickname: "레오", image: faker.image.avatar() },
 ];
 const Posts = [];

@@ -1,5 +1,4 @@
-import Home from "@/app/(beforeLogin)/page";
-import React, { ReactNode } from "react";
+import HomePage from "@/app/(afterLogin)/home/page";
 
 type Props = {
   params: { username: string; id: string; photoId: string };
@@ -13,8 +12,9 @@ type Props = {
 // 해당 슬러그의 값을 받아오기 위해서 params 사용
 
 export default function page({ params }: Props) {
-  return <Home />;
+  return <HomePage />;
 }
+// ㅎ ㅏ... 이거 before/home 컴포넌트로 임포트했다가 자꾸 리다이렉션돼서 개빡쳣네 ...
 // 결국 상세 페이지도 모달임,
 // 이미지를 클릭하면 뒤에 글이 나오는 배경이 그대로 깔려있고, 페러렐 + 인터셉팅 할건데,
 // 경로가 [username] -> status -> [id] -> photo -> [photoId] 로 이루어짐

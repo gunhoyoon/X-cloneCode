@@ -1,4 +1,5 @@
 "use client";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useSelectedLayoutSegment } from "next/navigation";
 import React from "react";
@@ -16,10 +17,7 @@ export default function NavMenu() {
   // 여기서 하위까지 다 받고 싶다면 useSelectedLayoutSegments 를 (s붙음) 사용해주면 됨
   // ex) /compose/tweet -> ['compose' , 'tweet']
   // useSelectedLayoutSegment ,useSelectedLayoutSegments 도 클라이언트 컴포넌트 훅임
-  const me = {
-    // 임시정보
-    id: "gunho",
-  };
+  const { data: me } = useSession();
 
   return (
     <>
@@ -128,11 +126,11 @@ export default function NavMenu() {
           </div>
         </Link>
       </li>
-      {me?.id && (
+      {me?.user?.email && (
         <li>
-          <Link href={`/${me?.id}`}>
+          <Link href={`/${me?.user?.email}`}>
             <div className={style.navPill}>
-              {segment === me.id ? (
+              {segment === me?.user?.email ? (
                 <>
                   <svg
                     width={26}

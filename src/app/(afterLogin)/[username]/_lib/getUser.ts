@@ -11,7 +11,6 @@ export const getUser: QueryFunction<User, [_1: string, _2: string]> = async ({
     next: {
       tags: ["users", username],
     },
-    cache: "no-store",
   });
 
   if (!res.ok) {

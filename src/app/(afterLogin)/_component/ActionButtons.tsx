@@ -1,6 +1,7 @@
 "use client";
 import style from "./post.module.css";
 import cx from "classnames";
+import { useRouter } from "next/navigation";
 
 type Props = {
   white?: boolean;

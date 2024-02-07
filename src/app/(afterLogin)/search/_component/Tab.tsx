@@ -14,14 +14,23 @@ export default function Tab() {
 
   const onClickHot = () => {
     setCurrent("hot");
-    router.replace(`/search?q=${searchParams.get("q")}`);
+    let url = `/search?q=${searchParams.get("q")}`;
+    if (searchParams.has("pf")) {
+      url += `&pf=${searchParams.get("pf")}`;
+    }
+    router.replace(url);
     // useSearchParams의 .get 함수를 사용해서 쿼리스트링의 값을 입력해주면 그 값을 가져올 수 있음
     // `/search?q=${가져온 값}`이 됨
   };
   const onClickNew = () => {
     setCurrent("new");
-    router.replace(`/search?${searchParams.toString()}&f=live`);
+    let url = `/search?q=${searchParams.get("q")}&f=live`;
+    if (searchParams.has("pf")) {
+      url += `&pf=${searchParams.get("pf")}`;
+    }
+    router.replace(url);
     // 여기서 searchParams.toString() 은 searchParams의 쿼리값 전부 다 가져다 쓰고, 즉 지금 있는 값 다 쓰고 &f=live 붙여서 쓰겠다 할 때 사용
+    // 근데 toString을 사용하니까 기존에 추가돼서 중복으로 계속 쿼리값이 들어와서 더해주기
   };
 
   return (

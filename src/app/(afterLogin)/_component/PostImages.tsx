@@ -29,7 +29,6 @@ export default function PostImages({ post }: Props) {
           backgroundSize: "contain",
         }}
       >
-        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={post.Images[0]?.link} alt="" />
       </Link>
     );

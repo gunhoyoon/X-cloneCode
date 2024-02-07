@@ -3,7 +3,7 @@ export async function getPostRecommends() {
     next: {
       tags: ["posts", "recommends"],
     },
-    cache: "no-store",
+    // cache: "no-store",
   });
 
   if (!res.ok) {

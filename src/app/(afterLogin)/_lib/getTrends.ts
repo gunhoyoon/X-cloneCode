@@ -3,7 +3,7 @@ export const getTrends = async () => {
     next: {
       tags: ["trends"],
     },
-    cache: "no-store",
+    // cache: "no-store",
   });
 
   if (!res.ok) {

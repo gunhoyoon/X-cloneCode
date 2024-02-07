@@ -1,8 +1,6 @@
 import style from "./search.module.css";
 import BackButton from "@/app/(afterLogin)/_component/BackButton";
 import SearchForm from "@/app/(afterLogin)/_component/SearchForm";
-
-import Post from "@/app/(afterLogin)/_component/Post";
 import Tab from "./_component/Tab";
 import SearchResult from "./_component/SearchResult";
 
@@ -10,6 +8,8 @@ type Props = {
   searchParams: { q: string; f?: string; pf?: string };
 };
 export default function Search({ searchParams }: Props) {
+  console.log(searchParams, "searchParams");
+  // searchParams = { q: '제로초', f: 'live', pf: 'on' }  와 같은 구조를 가지고 있음, 현재url의 쿼리스트링에 접근가능
   return (
     <main className={style.main}>
       <div className={style.searchTop}>

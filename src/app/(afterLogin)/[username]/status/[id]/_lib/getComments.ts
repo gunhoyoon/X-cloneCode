@@ -10,7 +10,7 @@ export const getComments: QueryFunction<
     next: {
       tags: ["posts", id, "comments"],
     },
-    cache: "no-store",
+    // cache: "no-store",
   });
   // The return value is *not* serialized
   // You can return Date, Map, Set, etc.

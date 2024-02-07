@@ -15,7 +15,8 @@ export const getSearchResult: QueryFunction<
       next: {
         tags: ["posts", "search", searchParams.q],
       }, // next.tags 에서는 searchParams(객체) 전체가 들어갈 수 없어서, searchParams.q 이렇게 사용해줌
-      cache: "no-store", // 해당 next : {tags}와 cache 부분은 리액트 쿼리에서 하는게 아니라, nextjs 에서 제공하는 서버쪽 캐싱임. 우선 이 정도만
+      // cache: "no-store",
+      // 해당 next : {tags}와 cache 부분은 리액트 쿼리에서 하는게 아니라, nextjs 에서 제공하는 서버쪽 캐싱임. 우선 이 정도만
     }
   );
 

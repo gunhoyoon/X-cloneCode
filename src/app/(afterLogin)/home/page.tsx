@@ -2,9 +2,7 @@ import {
   dehydrate,
   HydrationBoundary,
   QueryClient,
-  useQueryClient,
 } from "@tanstack/react-query";
-import { revalidateTag } from "next/cache";
 import React from "react";
 import styles from "./home.module.css";
 import PostForm from "./_component/PostForm";
@@ -34,7 +32,7 @@ import { getPostRecommends } from "./_lib/getPostRecommends";
 // 해당 함수는 서버컴포넌트이기 때문에 서버에서 실행이 된다.
 // 서버에선 http://localhost:9090/api/postRecommends 주소를 통해 받아온 데이터를 서버에 자동으로 저장(캐싱)을 함
 
-export default async function HomePage({}) {
+export default async function HomePage() {
   const queryClient = new QueryClient();
   // 지금 new QueryClient를 사용한 부분이 서버사이드 렌더링을 위해서 서버상에서 먼저 데이터를 요청하는 것
 
@@ -60,7 +58,6 @@ export default async function HomePage({}) {
         <TabProvider>
           <Tab />
           <PostForm />
-          {/* <PostRecommends /> */}
           <TabDecider />
         </TabProvider>
       </HydrationBoundary>

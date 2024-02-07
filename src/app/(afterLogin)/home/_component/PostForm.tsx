@@ -1,15 +1,13 @@
 "use client";
 
+import { useSession } from "next-auth/react";
 import { ChangeEventHandler, FormEventHandler, useRef, useState } from "react";
 import style from "./postForm.module.css";
 
 export default function PostForm() {
   const imageRef = useRef<HTMLInputElement>(null);
   const [content, setContent] = useState("");
-  const me = {
-    id: "zerohch0",
-    image: "/5Udwvqim.jpg",
-  };
+  const { data: me } = useSession();
 
   const onChange: ChangeEventHandler<HTMLTextAreaElement> = (e) => {
     setContent(e.target.value);
@@ -27,7 +25,12 @@ export default function PostForm() {
     <form className={style.postForm} onSubmit={onSubmit}>
       <div className={style.postUserSection}>
         <div className={style.postUserImage}>
-          <img src={me.image} alt={me.id} />
+          <img
+            src={me?.user?.image as string}
+            alt={me?.user?.email as string}
+          />
+          {/* me?.user?.id 를 사용할 수가 없음
+          next auth에서 지정한 속성 name , image, email 만 가능, email = id 로 사용  */}
         </div>
       </div>
       <div className={style.postInputSection}>
@@ -56,7 +59,7 @@ export default function PostForm() {
                     <path d="M3 5.5C3 4.119 4.119 3 5.5 3h13C19.881 3 21 4.119 21 5.5v13c0 1.381-1.119 2.5-2.5 2.5h-13C4.119 21 3 19.881 3 18.5v-13zM5.5 5c-.276 0-.5.224-.5.5v9.086l3-3 3 3 5-5 3 3V5.5c0-.276-.224-.5-.5-.5h-13zM19 15.414l-3-3-5 5-3-3-3 3V18.5c0 .276.224.5.5.5h13c.276 0 .5-.224.5-.5v-3.086zM9.75 7C8.784 7 8 7.784 8 8.75s.784 1.75 1.75 1.75 1.75-.784 1.75-1.75S10.716 7 9.75 7z"></path>
                   </g>
                 </svg>
-                {/* 사진등록 버튼 이미지 */}
+                {/* 사  진등록 버튼 이미지 */}
                 {/* 버튼의 Ul가 될 이미지고, 버튼엔 ref.current.click() 이 연결되어있음 */}
                 {/* click() 은 DOM API 로 클릭한거처럼 동작하게 된다. */}
               </button>

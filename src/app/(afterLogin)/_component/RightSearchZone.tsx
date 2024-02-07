@@ -5,6 +5,8 @@ import styles from "./rightSearchZone.module.css";
 import SearchForm from "./SearchForm";
 export default function RightSearchZone() {
   const searchParams = useSearchParams();
+  // useSearchParams는 readOnly기 때문에 수정을 못함
+  // 그래서 new URLSearchParams 로 복사를 하고 수정.
   const router = useRouter();
 
   const onChangeFollow = () => {
@@ -15,7 +17,7 @@ export default function RightSearchZone() {
     // router.replace(url);
     const newSearchParams = new URLSearchParams(searchParams);
     newSearchParams.set("pf", "on");
-    router.replace(newSearchParams.toString());
+    router.replace(`/search?${newSearchParams.toString()}`);
     // new URLSearchParam 자체를 console.log에 찍게 되면 인스턴스 자체가 나오기 때문에,
     // 이걸 url 주소로 사용하기 위해선 toString() 을 붙여줘야된다.
   };
@@ -29,7 +31,7 @@ export default function RightSearchZone() {
     // router.replace(url);
     const newSearchParams = new URLSearchParams(searchParams);
     newSearchParams.delete("pf");
-    router.replace(newSearchParams.toString());
+    router.replace(`/search?${newSearchParams.toString()}`);
   };
 
   const pathname = usePathname();

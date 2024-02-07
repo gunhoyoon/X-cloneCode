@@ -52,6 +52,10 @@ export const handlers = [
     await delay(3000);
     const url = new URL(request.url);
     const cursor = parseInt(url.searchParams.get("cursor") as string) || 0;
+    // 커서를 가지고 마지막 id로 요청이 가면, 새로운 데이터를 요청하는 코드가 필요함.
+    // 현재 위치에 따른 id값(cursor)을 넘겨주는 코드가 필요할듯
+    // 커서가 0이다 = 1,2,3,4,5 / 커서가 10이다 = 11,12,13,14,15 요청 5개씩
+    // 처음엔 커서가 없으니 0 으로 시작하고, 계속 +1 씩 증가하면서 랜덤 데이터를 불러옴. 무한 스크롤.
     return HttpResponse.json([
       {
         postId: cursor + 1,

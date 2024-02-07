@@ -40,14 +40,13 @@ export default async function HomePage() {
   // 초기로드 시 react server에서 서버 측 리소스(파일 시스템,데이터베이스) 와 같은 곳에 접근을 해서 처리한 후
   // 데이터를 react 트리로 보내게 된다. 이를 통해 리액트 컴포넌트가 html로 렌더링되어 초기 페이지 로드시 사용되며
   // 클라이언트 측 코드에도 포함되어 상호작용을 위한 스크립트로 사용된다.
-  await queryClient.prefetchQuery({
+  await queryClient.prefetchInfiniteQuery({
     queryKey: ["posts", "recommends"],
-    // queryKey를 ["posts", "recommends"] 를 갖고 있는 애일땐 항상 getPostRecommends함수를 실행해라
-    // 키가 문자열이 아니라,  ["posts", "recommends"] 의 형태인게 특징임
     queryFn: getPostRecommends,
+    initialPageParam: 0, // cursor값, prefetchInfiniteQuery 사용시 필수 속성
   });
-  // 해당 데이터가 초기에 서버에서 처리되고, 초기 페이지 로드시 클라이언트에 전달되어 초기 렌더링을 빠르게 할 수 있다.
-  // getPostRecommends함수를 통해 데이터를 불러오고나면 dehydrateState 를 react query가 hydration을 해야됨
+  // 인피니티 스크롤링을 하기 위해서 기존에 서버에서 미리 받아왔던 데이터도 prefetchInfiniteQuery 로 수정해줬음
+  // 그리고 보여주고 있는 PostRecommends.tsx에서도 useInfiniteQuery 로 변경 / 그에 맞는 속성 추가
   const dehydrateState = dehydrate(queryClient);
   // 위 데이터를 불러오고 싶으면
   // queryClient.getQueryData(["posts", "recommend"]); HydrationBoundary안에 있는 컴포넌트들에선 이런식으로 데이터를 불러 사용할 수 있다.

@@ -9,6 +9,8 @@ type Props = {
   id: string;
   noImage?: boolean;
 };
+const staleTime = 60 * 1000;
+const gcTime = 300 * 1000;
 
 export default function SinglePost({ id, noImage }: Props) {
   const { data: post, error } = useQuery<
@@ -19,8 +21,8 @@ export default function SinglePost({ id, noImage }: Props) {
   >({
     queryKey: ["posts", id],
     queryFn: getSinglePost,
-    staleTime: 60 * 1000,
-    gcTime: 300 * 1000,
+    staleTime,
+    gcTime,
   });
 
   if (error) {

@@ -9,11 +9,7 @@ type Props = {
 
 export default function FollowRecommend({ user }: Props) {
   const onFollow = () => {};
-  // const user = {
-  //   id: "elonMusk",
-  //   nickname: "Elon Musk",
-  //   image: "/yRsRRjGO.jpg",
-  // };
+
   return (
     <div className={styles.container}>
       <div className={styles.userLogoSection}>

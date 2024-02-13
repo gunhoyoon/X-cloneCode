@@ -11,27 +11,12 @@ import TabDecider from "./_component/TabDecider";
 import TabProvider from "./_component/TabProvider";
 import { getPostRecommends } from "./_lib/getPostRecommends";
 
-// export async function getPostRecommends() {
-//   const res = await fetch(`http://localhost:9090/api/postRecommends`, {
-//     next: {
-//       tags: ["posts", "recommends"],
-//     },
-//     cache: "no-store",
-//     // 캐시를 너무 오래해놓으면 새로운 데이터가 안불러와지니까, 적당히 업데이트할 수 있게 설정해둠
-//   });
-
-//   if (!res.ok) {
-//     throw new Error("Failed to fetch data");
-//   }
-//   // 응답 유효성 검사
-
-//   revalidateTag("recommends");
-//   // 이 요청을 보내게되면, 서버에 있는 캐시가 날라감, 그럼 위 요청을 다시 하게 되면 새로운 데이터를 가져오게 됨
-//   return res.json();
-// }
 // 해당 함수는 서버컴포넌트이기 때문에 서버에서 실행이 된다.
 // 서버에선 http://localhost:9090/api/postRecommends 주소를 통해 받아온 데이터를 서버에 자동으로 저장(캐싱)을 함
-
+// 캐싱을 하기 떄문에 posts, recommends -> 즉 afterLogin 의 홈페이지는 Pending, loading에서의 스피너나 대체페이지가 의미가 없음
+// 해당 페이지의 경우 서버에서 미리 불러와 초기 로드시 클라이언트에게 넘겨주기 때문에 로딩이나 팬딩의 의미 자체가 존재하지 않는거임
+// 근데 첫 페이지부터 로딩바를 보여주고 싶으면 prefetchInfiniteQuery 이거 안사용하면 됨
+// 이걸 사용안하면 기존에 postRecommend 에 있는 함수가 데이터 요청할거고 로딩바도 보여지게 되겠지,ssr도 안될거임. 근데 기존 x에선 컨텐츠 ssr로 안해둿음
 export default async function HomePage() {
   const queryClient = new QueryClient();
   // 지금 new QueryClient를 사용한 부분이 서버사이드 렌더링을 위해서 서버상에서 먼저 데이터를 요청하는 것
@@ -50,7 +35,7 @@ export default async function HomePage() {
   const dehydrateState = dehydrate(queryClient);
   // 위 데이터를 불러오고 싶으면
   // queryClient.getQueryData(["posts", "recommend"]); HydrationBoundary안에 있는 컴포넌트들에선 이런식으로 데이터를 불러 사용할 수 있다.
-
+  // throw "으악";
   return (
     <main className={styles.main}>
       <HydrationBoundary state={dehydrateState}>
@@ -64,7 +49,6 @@ export default async function HomePage() {
   );
 }
 // 탭프로바이더를 통해 현재 탭의 상태를 공유하고 있으니, 탭에 상태에 따라 다른 컴포넌트를 보여주는, 컴포넌트를 만들면 된다.(tabDecider)
-
 // 현재 탭의 상태에 따라 포스트들이 바뀐다.
 // 그 말은 탭의 상태를 포스트 관련 컴포넌트들은 알고 있어야한다는 것이다.
 // 현재 데이터 상태를 공유하기 위해서 바운더리로 감싸줌, 중요한건 서버와 클라이언트의 동기화가 된다는거임

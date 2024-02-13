@@ -1,17 +1,14 @@
 "use client";
 import { Post as IPost } from "@/model/Post";
-import {
-  InfiniteData,
-  useInfiniteQuery,
-  useQuery,
-} from "@tanstack/react-query";
+import { InfiniteData, useInfiniteQuery } from "@tanstack/react-query";
 import React, { Fragment, useEffect } from "react";
 import Post from "../../_component/Post";
 import { getPostRecommends } from "../_lib/getPostRecommends";
 import { useInView } from "react-intersection-observer";
+import styles from "../home.module.css";
 
 export default function PostRecommends() {
-  const { data, isLoading, fetchNextPage, hasNextPage, isFetching } =
+  const { data, isLoading, fetchNextPage, hasNextPage, isFetching, isPending } =
     useInfiniteQuery<
       IPost[], // 함수가 리턴하는 데이터 타입
       Object,
@@ -34,9 +31,7 @@ export default function PostRecommends() {
       // initialData: () => [], reset은 데이터의 initialData(초기 데이터)가 있을 수도 있는 상태에서 reset을 하게 되면, 초기 상태로 리셋이 됨, 초기 상태가 없을 경우 데이터를 다시 가져옴
     });
   // 서버 컴포넌트에서 요청한 데이터를 클라이언트에서 똑같이 요청하는 이유는 사용자와의 상호작용에서 필요한 데이터를 보여주기 위함임(쉽게 말하면 탭이 클릭됐을 때 데이터를 요청해서 보여줘야하니까.)
-  if (isLoading) {
-    return <div>loading ...</div>;
-  }
+
   // console.log(data, "data");
   // 데이터 타입이 2차원 배열인것 + initialPageParam(cursor), getNextPageParam(next cursor) 데이터가 어떤식으로 사용되는지만 알면 될듯
   // fetchNextPage , hasNextPage 를 추가적으로 사용해줘야하는데.
@@ -45,19 +40,49 @@ export default function PostRecommends() {
   // 5개보다 적을 때 즉 5의 배수가 안될 때, 그 페이지가 마지막 페이지가 되는거임. 만약 5의 배수로 딱 떨어진다면, 어쩔 수 없이 포스트 0개짜리 다음 페이지를 불러와야됨
   const { ref, inView } = useInView({
     // 해당 ref 를 div랑 연결해줌
-    threshold: 0, // 해당 div가 보이고 몇 픽셀 정도에 이벤트가 실행될지? = 보이자마자 실행하겠다.
-    delay: 3, // 보이고 몇 초 후에 이벤트 실행할거임? = 바로
+    threshold: 0, // 대상 요소의 몇퍼센트가 보인 후 호출할건지,
+    delay: 0, // 보이고 몇 초 후에 이벤트 실행할거임?
   });
   // inView = ref 로 연결한 div가 화면에 안보이면 false , 보이면 true
   // 그럼 의존성 배열로 넣었으니 보였다 안보여도 useEffect가 실행될테니까, inView가 true일때를 잡아서 다음 페이지를 불러오는 함수(fetchNextPage) 를 실행시키는거임
   useEffect(() => {
     if (inView) {
       !isFetching && hasNextPage && fetchNextPage();
-      // inView가 true면, 데이터를 가져오는 상태도 아니고, 다음 페이지가 있으면, fetchNextPage() 실행
-      // 여기서 의존성 보고 좀 더 파악할 필요가 있음
-      // 지금 페이지가 하단에 닿으면 요청이 가긴하는데, 우선 좀 느리고, 요청이 두번씩 보내짐
     }
-  }, [inView, isFetching, hasNextPage, fetchNextPage]);
+  }, [inView, isFetching, hasNextPage]);
+  if (isPending) {
+    <div style={{ display: "flex", justifyContent: "center" }}>
+      <svg
+        className={styles.loader}
+        height="100%"
+        viewBox="0 0 32 32"
+        width={40}
+      >
+        <circle
+          cx="16"
+          cy="16"
+          fill="none"
+          r="14"
+          strokeWidth="4"
+          style={{ stroke: "rgb(29, 155, 240)", opacity: 0.2 }}
+        ></circle>
+        <circle
+          cx="16"
+          cy="16"
+          fill="none"
+          r="14"
+          strokeWidth="4"
+          style={{
+            stroke: "rgb(29, 155, 240)",
+            strokeDasharray: 80,
+            strokeDashoffset: 60,
+          }}
+        ></circle>
+      </svg>
+    </div>;
+  }
+  // 해당 페이지는 서버 컴포넌트고 ssr로 그려지기 때문에 isPending, isLoading 이 의미가 없음
+
   return (
     <>
       {data?.pages?.map((page, index) => (
@@ -67,7 +92,8 @@ export default function PostRecommends() {
           ))}
         </Fragment>
       ))}
-      <div ref={ref} style={{ height: 50 }} />
+
+      <div ref={ref} style={{ backgroundColor: "pink", height: 50 }} />
       {/* 얘가 보이기 시작하면 fetchNextPage 를 호출할거임 */}
       {/* useInfiniteQuery의 반환값이 1차원 배열이 아니라 2차원 배열이기때문에 맵을 두번 사용해줘서 데이터를 뽑아쓸 수 있게 함*/}
       {/* 내부에서 사용한 맵의 키 , 외부에서 사용한 맵의 키를 넣어주기 위해 Fragment 를 사용함. 원래는 빈채로 사용하지만 프롭이 있을 땐 사용해줘야함  */}

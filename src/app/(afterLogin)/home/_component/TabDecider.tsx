@@ -5,6 +5,7 @@ import PostRecommends from "./PostRecommends";
 import { TabContext } from "./TabProvider";
 
 export default function TabDecider() {
+  // const { tab } = use(TabContext);
   const { tab } = useContext(TabContext);
   if (tab === "rec") {
     return <PostRecommends />;

@@ -1,15 +1,18 @@
 "use client";
 import { Post as IPost } from "@/model/Post";
-import { InfiniteData, useInfiniteQuery } from "@tanstack/react-query";
+import {
+  InfiniteData,
+  useInfiniteQuery,
+  useSuspenseInfiniteQuery,
+} from "@tanstack/react-query";
 import React, { Fragment, useEffect } from "react";
 import Post from "../../_component/Post";
 import { getPostRecommends } from "../_lib/getPostRecommends";
 import { useInView } from "react-intersection-observer";
 import styles from "../home.module.css";
-
 export default function PostRecommends() {
-  const { data, isLoading, fetchNextPage, hasNextPage, isFetching, isPending } =
-    useInfiniteQuery<
+  const { data, fetchNextPage, hasNextPage, isFetching, isPending } =
+    useSuspenseInfiniteQuery<
       IPost[], // 함수가 리턴하는 데이터 타입
       Object,
       InfiniteData<IPost[]>, // 무한 스크롤 데이터 타입 (IPost[] 를 포함하는 infiniteData)
@@ -50,38 +53,38 @@ export default function PostRecommends() {
       !isFetching && hasNextPage && fetchNextPage();
     }
   }, [inView, isFetching, hasNextPage]);
-  if (isPending) {
-    <div style={{ display: "flex", justifyContent: "center" }}>
-      <svg
-        className={styles.loader}
-        height="100%"
-        viewBox="0 0 32 32"
-        width={40}
-      >
-        <circle
-          cx="16"
-          cy="16"
-          fill="none"
-          r="14"
-          strokeWidth="4"
-          style={{ stroke: "rgb(29, 155, 240)", opacity: 0.2 }}
-        ></circle>
-        <circle
-          cx="16"
-          cy="16"
-          fill="none"
-          r="14"
-          strokeWidth="4"
-          style={{
-            stroke: "rgb(29, 155, 240)",
-            strokeDasharray: 80,
-            strokeDashoffset: 60,
-          }}
-        ></circle>
-      </svg>
-    </div>;
-  }
-  // 해당 페이지는 서버 컴포넌트고 ssr로 그려지기 때문에 isPending, isLoading 이 의미가 없음
+  // if (isPending) {
+  //   <div style={{ display: "flex", justifyContent: "center" }}>
+  //     <svg
+  //       className={styles.loader}
+  //       height="100%"
+  //       viewBox="0 0 32 32"
+  //       width={40}
+  //     >
+  //       <circle
+  //         cx="16"
+  //         cy="16"
+  //         fill="none"
+  //         r="14"
+  //         strokeWidth="4"
+  //         style={{ stroke: "rgb(29, 155, 240)", opacity: 0.2 }}
+  //       ></circle>
+  //       <circle
+  //         cx="16"
+  //         cy="16"
+  //         fill="none"
+  //         r="14"
+  //         strokeWidth="4"
+  //         style={{
+  //           stroke: "rgb(29, 155, 240)",
+  //           strokeDasharray: 80,
+  //           strokeDashoffset: 60,
+  //         }}
+  //       ></circle>
+  //     </svg>
+  //   </div>;
+  // }
+  // useQuery의 로딩, 에러가 중복적으로 작성되기 때문에, useSuspenseInfiniteQuery를 사용해서 날 감싸고 있는 서스팬스의 fallback을 사용하게 된다.
 
   return (
     <>

@@ -29,3 +29,5 @@ export default function Error({
   );
 }
 // afterLogin -> home 에서 일어나는 에러처리
+// 단순히 home 이 아니라 서버 컴포넌트에서 일어나는 에러를 처리하는거임
+// client에서 일어나는 에러는 const {data , isError} = useQuery() 사용하게 될 때 isError 로 잡아서 처리해야됨

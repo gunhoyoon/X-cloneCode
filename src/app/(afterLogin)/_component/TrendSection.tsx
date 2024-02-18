@@ -7,11 +7,16 @@ import { useSession } from "next-auth/react";
 import { useQuery } from "@tanstack/react-query";
 import { HashTag } from "@/model/HashTag";
 import { getTrends } from "../_lib/getTrends";
+import { Session } from "@auth/core/types";
 
-export default function TrendSection() {
+type Props = {
+  me: Session | null;
+};
+
+export default function TrendSection({ me: session }: Props) {
   // 트렌드 자체가 로그인을 했을 때만 데이터를 가져오는데, 아래 코드때문에 로그인을 안했을때도 데이터를 불러오게 됨, 그래서 수정을 해줘야함
   const pathname = usePathname();
-  const { data: session } = useSession();
+  // const { data: session } = useSession();
 
   const { data } = useQuery<HashTag[]>({
     queryKey: ["trends"],

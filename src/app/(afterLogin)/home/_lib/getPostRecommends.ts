@@ -6,7 +6,7 @@ type Props = {
 export async function getPostRecommends({ pageParam }: Props) {
   // pageParams 을 전달하면서 다음 페이지를 불러오는 함수는 만들어둠
   const res = await fetch(
-    `http://localhost:9090/api/postRecommends?cursor=${pageParam}`,
+    `http://localhost:9090/api/posts/recommends?cursor=${pageParam}`,
     {
       next: {
         tags: ["posts", "recommends"],

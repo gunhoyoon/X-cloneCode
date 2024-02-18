@@ -48,7 +48,7 @@ export default async function AfterLoginLayout({ children, modal }: Props) {
                     </svg>
                   </Link>
                 </nav>
-                <LogoutButton />
+                <LogoutButton me={session} />
               </>
             )}
           </div>
@@ -60,7 +60,7 @@ export default async function AfterLoginLayout({ children, modal }: Props) {
             <main className={styles.main}>{children}</main>
             <section className={styles.rightSection}>
               <RightSearchZone />
-              <TrendSection />
+              <TrendSection me={session} />
               <div className={styles.followRecommend}>
                 <h3>팔로우 추천</h3>
                 <FollowRecommendsSection />

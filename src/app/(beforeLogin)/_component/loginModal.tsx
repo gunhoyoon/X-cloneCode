@@ -14,19 +14,35 @@ export default function LoginModal() {
   const onSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
     setMessage("");
-    try {
-      await signIn("credentials", {
-        username: id,
-        password,
-        redirect: false,
-        // 해당 옵션은 서버쪽 redirect 설정이기 때문에, false 로 설정하고
-        // 아랫줄에 useRouter 사용해서 client 라우터 사용할거임
-      });
-      router.replace("/home");
-    } catch (err) {
-      console.error(err);
+    const response = await signIn("credentials", {
+      username: id,
+      password,
+      redirect: false,
+      // 해당 옵션은 서버쪽 redirect 설정이기 때문에, false 로 설정하고
+    });
+    if (response?.error === "CredentialsSignin") {
       setMessage("아이디와 비밀번호가 일치하지 않습니다.");
+    } else {
+      router.replace("/home");
     }
+    // 진단 파악 , 비슷한 이슈 찾아보기
+    // next??
+
+    // try {
+    //   console.log("here");
+    //   const response = await signIn("credentials", {
+    //     username: id,
+    //     password,
+    //     redirect: false,
+    //     // 해당 옵션은 서버쪽 redirect 설정이기 때문에, false 로 설정하고
+    //   });
+    //   console.log("here2", response);
+    //   router.replace("/home");
+    // } catch (err) {
+    //   console.log("here3");
+    //   console.error(err);
+    //   setMessage("아이디와 비밀번호가 일치하지 않습니다.");
+    // } // 디비에 없는 아이디로 로그인 요청했을 경우
   };
   const onClickClose = () => {
     router.back();

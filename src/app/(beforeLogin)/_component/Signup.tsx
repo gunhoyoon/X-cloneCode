@@ -99,7 +99,9 @@ export default function SignupModal() {
               >
                 가입하기
               </button>
-              <div className={style.error}>{showMessage(state?.message)}</div>
+              <div className={style.error}>
+                {showMessage(state?.message as string)}
+              </div>
             </div>
           </form>
         </div>

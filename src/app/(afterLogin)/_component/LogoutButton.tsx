@@ -2,11 +2,22 @@
 import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import style from "./logoutButton.module.css";
-export default function LogoutButton() {
+import { Session } from "@auth/core/types";
+
+type Props = {
+  me: Session | null;
+};
+
+export default function LogoutButton({ me }: Props) {
   const router = useRouter();
-  const { data: me } = useSession(); // 클라이언트에서 useSession 사용해서 내 정보 불러오기
+  // const { data: me } = useSession();
+  // 클라이언트에서 useSession 사용해서 내 정보 불러오기
+  // 처음 회원가입하고, signIn 시켜주고 홈으로 redirect 시켜줌
+  // 클라이언트 측 useSession 을 통해 세션 정보를 저장하고 캐싱할 수 있는데.이 캐시가 업데이트 되는 데에 시간이 걸려.
+  // 최신정보를 바로 받아오지 못할 수 있음. 그래서 서버에서 직접 props으로 넘겨줘서 사용
   // console.log(me, "me");
   // 반환값 : user = {email : YunGunHo , image : "/5Udwvqim.jpg", name "윤건호"}
+  // 서버에서 데이터가
 
   const onLogOut = () => {
     signOut({ redirect: false }) //
@@ -14,7 +25,9 @@ export default function LogoutButton() {
         router.replace("/");
       });
   };
-  if (!me?.user) {
+  const hasUserInfo = me && me.user; // !me?.user
+
+  if (!hasUserInfo) {
     return null;
   }
 

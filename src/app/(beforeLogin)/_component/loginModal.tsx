@@ -20,6 +20,8 @@ export default function LoginModal() {
       redirect: false,
       // 해당 옵션은 서버쪽 redirect 설정이기 때문에, false 로 설정하고
     });
+    // console.log("response", response);
+    // error 일때 CredentialsSignin, error 아닐 때 null
     if (response?.error === "CredentialsSignin") {
       setMessage("아이디와 비밀번호가 일치하지 않습니다.");
     } else {

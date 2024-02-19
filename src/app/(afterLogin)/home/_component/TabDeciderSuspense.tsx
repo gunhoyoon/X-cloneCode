@@ -26,7 +26,7 @@ export default function TabDeciderSuspense() {
     // 가비지 컬렉터 타임 기본값 5분
     // initialData: () => [], reset은 데이터의 initialData(초기 데이터)가 있을 수도 있는 상태에서 reset을 하게 되면, 초기 상태로 리셋이 됨, 초기 상태가 없을 경우 데이터를 다시 가져옴
   });
-  console.log("data", data);
+  // console.log("data", data);
   // 인피니티 스크롤링을 하기 위해서 기존에 서버에서 미리 받아왔던 데이터도 prefetchInfiniteQuery 로 수정해줬음
   // 그리고 보여주고 있는 PostRecommends.tsx에서도 useInfiniteQuery 로 변경 / 그에 맞는 속성 추가
   //   const dehydrateState = dehydrate(queryClient);

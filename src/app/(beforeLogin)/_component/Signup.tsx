@@ -23,7 +23,7 @@ function showMessage(messasge: string) {
   }
   return "";
 }
-
+// 서버액션
 export default function SignupModal() {
   const [state, formAction] = useFormState(onSubmit, { message: null });
   const { pending } = useFormStatus();

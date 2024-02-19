@@ -29,7 +29,7 @@ export default async function HomePage() {
           {/* Suspense가 TabDeciderSuspense 내부가 아닌 page단에 있는건, 이렇게 해야  <TabDeciderSuspense /> 컴포넌트가 로드가 됐는지 어떤 상태인지 감지가 되니까, 
           다른건 먼저 로드하고 이건 잠깐 중단이 가능하니까 */}
           <TabDecider />
-          <TabDeciderSuspense />
+          {/* <TabDeciderSuspense /> */}
         </Suspense>
       </TabProvider>
     </main>

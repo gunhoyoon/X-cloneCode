@@ -109,3 +109,8 @@
 .closeButton:hover {
   background-color: rgba(15, 20, 25, 0.1);
 }
+
+.message {
+  color: red;
+  margin-left: 80px;
+}

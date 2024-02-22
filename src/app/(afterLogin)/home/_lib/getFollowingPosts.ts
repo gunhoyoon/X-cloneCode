@@ -1,11 +1,18 @@
-export async function getFollowignPosts() {
-  const res = await fetch(`http://localhost:9090/api/posts/followings`, {
-    next: {
-      tags: ["posts", "followings"],
-    },
-    // cache: "no-store",
-    // 해당 next : {tags}와 cache 부분은 리액트 쿼리에서 하는게 아니라, nextjs 에서 제공하는 서버쪽 캐싱임. 우선 이 정도만
-  });
+type Props = {
+  pageParam: number;
+};
+export async function getFollowignPosts({ pageParam }: Props) {
+  const res = await fetch(
+    `http://localhost:9090/api/posts/followings?cursor=${pageParam}`,
+    {
+      next: {
+        tags: ["posts", "followings"],
+      },
+      credentials: "include",
+      // cache: "no-store",
+      // 해당 next : {tags}와 cache 부분은 리액트 쿼리에서 하는게 아니라, nextjs 에서 제공하는 서버쪽 캐싱임. 우선 이 정도만
+    }
+  );
 
   if (!res.ok) {
     throw new Error("Failed to fetch data");

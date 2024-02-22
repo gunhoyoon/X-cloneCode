@@ -9,7 +9,7 @@ import React, { Fragment, useEffect } from "react";
 import Post from "../../_component/Post";
 import { getPostRecommends } from "../_lib/getPostRecommends";
 import { useInView } from "react-intersection-observer";
-import styles from "../home.module.css";
+
 export default function PostRecommends() {
   const { data, fetchNextPage, hasNextPage, isFetching, isPending } =
     useSuspenseInfiniteQuery<
@@ -98,8 +98,8 @@ export default function PostRecommends() {
 
       <div ref={ref} style={{ backgroundColor: "pink", height: 50 }} />
       {/* 얘가 보이기 시작하면 fetchNextPage 를 호출할거임 */}
-      {/* useInfiniteQuery의 반환값이 1차원 배열이 아니라 2차원 배열이기때문에 맵을 두번 사용해줘서 데이터를 뽑아쓸 수 있게 함*/}
       {/* 내부에서 사용한 맵의 키 , 외부에서 사용한 맵의 키를 넣어주기 위해 Fragment 를 사용함. 원래는 빈채로 사용하지만 프롭이 있을 땐 사용해줘야함  */}
+      {/* 이차원 배열의 형태 */}
     </>
   );
 }

@@ -7,6 +7,7 @@ import ActionButtons from "@/app/(afterLogin)/_component/ActionButtons";
 import PostArticle from "./PostArticle";
 import PostImages from "./PostImages";
 import { Post } from "@/model/Post";
+import { MouseEventHandler } from "react";
 dayjs.locale("ko");
 // 한글 플러그인
 dayjs.extend(relativeTime);
@@ -18,6 +19,10 @@ type Props = {
   noImage?: boolean;
   post: Post;
 };
+const stopPropagetion: MouseEventHandler<HTMLAnchorElement> = (e) => {
+  e.stopPropagation();
+  // 이벤트 버블링, 이벤트캡쳐링이 해당 돔트리에서 더 이상 전파되지않게 막아줌
+};
 
 export default function Post({ noImage, post }: Props) {
   const target = post;
@@ -26,14 +31,18 @@ export default function Post({ noImage, post }: Props) {
     <PostArticle post={target}>
       <div className={style.postWrapper}>
         <div className={style.postUserSection}>
-          <Link href={`/${target.User.id}`} className={style.postUserImage}>
+          <Link
+            href={`/${target.User.id}`}
+            className={style.postUserImage}
+            onClick={stopPropagetion}
+          >
             <img src={target.User.image} alt={target.User.nickname} />
             <div className={style.postShade} />
           </Link>
         </div>
         <div className={style.postBody}>
           <div className={style.postMeta}>
-            <Link href={`/${target.User.id}`}>
+            <Link href={`/${target.User.id}`} onClick={stopPropagetion}>
               <span className={style.postUserName}>{target.User.nickname}</span>
               &nbsp;
               <span className={style.postUserId}>@{target.User.id}</span>
@@ -49,7 +58,7 @@ export default function Post({ noImage, post }: Props) {
               <PostImages post={target} />
             </div>
           )}
-          <ActionButtons />
+          <ActionButtons post={post} />
         </div>
       </div>
     </PostArticle>

@@ -26,6 +26,7 @@ export const {
     CredentialsProvider({
       async authorize(credentials) {
         const authResponse = await fetch(`${process.env.AUTH_URL}/api/login`, {
+          // AUTH_URL (백엔드 서버)에 로그인 요청을 보냄
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -33,14 +34,18 @@ export const {
           body: JSON.stringify({
             id: credentials.username,
             password: credentials.password,
+            // 이 부분이 백엔드에서의 로그인이고
           }),
-          //credentials안에 username, password가 고정으로 들어가있음. 그래서 username의 이름을 id로 바꿔줌
         });
         let setCookie = authResponse.headers.get("Set-Cookie");
+        // setCookie에 담음 지금 프론트 서버에서 백엔드 서버의 토큰을 받아온 것임, 토큰이나 세션 쿠키를 위와 같이 헤더에 넣어서 응답해줌
         console.log("set-cookie", setCookie);
+        // 토큰이 문자열로 되어있음 그래서 직접 쓰긴 좀 그렇고 cookie 라는 라이브러리사용해서 객체로 만들어줌
         if (setCookie) {
           const parsed = cookie.parse(setCookie);
           cookies().set("connect.sid", parsed["connect.sid"], parsed); // 브라우저에 쿠키를 심어주는 것
+          // set 순서대로 쿠키 이름, parsed에서 connect.sid 에 해당하는 키를 찾아 값을 할당, 마지막 옵션 설정, 여기선 HttpOnly
+          console.log("parsed", parsed);
         }
 
         if (!authResponse.ok) {

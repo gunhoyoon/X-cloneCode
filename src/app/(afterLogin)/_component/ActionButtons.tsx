@@ -1,39 +1,462 @@
 "use client";
 import style from "./post.module.css";
 import cx from "classnames";
+import { MouseEventHandler } from "react";
+import {
+  InfiniteData,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query";
+import { Post } from "@/model/Post";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+// import { useModalStore } from "@/store/modal";
 
 type Props = {
   white?: boolean;
+  post: Post;
 };
+export default function ActionButtons({ white, post }: Props) {
+  const queryClient = useQueryClient();
+  const { data: session } = useSession();
+  const router = useRouter();
+  // const modalStore = useModalStore();
 
-export default function ActionButtons({ white }: Props) {
-  const commented = true;
-  const reposted = true;
-  const liked = false;
+  const reposted = !!post.Reposts?.find(
+    (v) => v.userId === session?.user?.email
+  );
+  const liked = !!post.Hearts?.find((v) => v.userId === session?.user?.email);
+  const { postId } = post;
 
-  const onClickComment = () => {};
-  const onClickRepost = () => {};
-  const onClickHeart = () => {};
+  const heart = useMutation({
+    mutationFn: () => {
+      return fetch(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/posts/${postId}/heart`,
+        {
+          method: "post",
+          credentials: "include",
+        }
+      );
+    },
+    onMutate() {
+      const queryCache = queryClient.getQueryCache();
+      const queryKeys = queryCache.getAll().map((cache) => cache.queryKey);
+      console.log("queryKeys", queryKeys);
+      queryKeys.forEach((queryKey) => {
+        if (queryKey[0] === "posts") {
+          console.log(queryKey[0]);
+          const value: Post | InfiniteData<Post[]> | undefined =
+            queryClient.getQueryData(queryKey);
+          if (value && "pages" in value) {
+            console.log("array", value);
+            const obj = value.pages.flat().find((v) => v.postId === postId);
+            if (obj) {
+              // 존재는 하는지
+              const pageIndex = value.pages.findIndex((page) =>
+                page.includes(obj)
+              );
+              const index = value.pages[pageIndex].findIndex(
+                (v) => v.postId === postId
+              );
+              console.log("found index", index);
+              const shallow = { ...value };
+              value.pages = { ...value.pages };
+              value.pages[pageIndex] = [...value.pages[pageIndex]];
+              shallow.pages[pageIndex][index] = {
+                ...shallow.pages[pageIndex][index],
+                Hearts: [{ userId: session?.user?.email as string }],
+                _count: {
+                  ...shallow.pages[pageIndex][index]._count,
+                  Hearts: shallow.pages[pageIndex][index]._count.Hearts + 1,
+                },
+              };
+              queryClient.setQueryData(queryKey, shallow);
+            }
+          } else if (value) {
+            // 싱글 포스트인 경우
+            if (value.postId === postId) {
+              const shallow = {
+                ...value,
+                Hearts: [{ userId: session?.user?.email as string }],
+                _count: {
+                  ...value._count,
+                  Hearts: value._count.Hearts + 1,
+                },
+              };
+              queryClient.setQueryData(queryKey, shallow);
+            }
+          }
+        }
+      });
+    },
+    onError() {
+      const queryCache = queryClient.getQueryCache();
+      const queryKeys = queryCache.getAll().map((cache) => cache.queryKey);
+      console.log("queryKeys", queryKeys);
+      queryKeys.forEach((queryKey) => {
+        if (queryKey[0] === "posts") {
+          const value: Post | InfiniteData<Post[]> | undefined =
+            queryClient.getQueryData(queryKey);
+
+          if (value && "pages" in value) {
+            console.log("array", value);
+            const obj = value.pages.flat().find((v) => v.postId === postId);
+            if (obj) {
+              // 존재는 하는지
+              const pageIndex = value.pages.findIndex((page) =>
+                page.includes(obj)
+              );
+              const index = value.pages[pageIndex].findIndex(
+                (v) => v.postId === postId
+              );
+
+              console.log("found index", index);
+              const shallow = { ...value };
+              value.pages = { ...value.pages };
+              value.pages[pageIndex] = [...value.pages[pageIndex]];
+
+              shallow.pages[pageIndex][index] = {
+                ...shallow.pages[pageIndex][index],
+                Hearts: shallow.pages[pageIndex][index].Hearts.filter(
+                  (v) => v.userId !== session?.user?.email
+                ),
+                _count: {
+                  ...shallow.pages[pageIndex][index]._count,
+                  Hearts: shallow.pages[pageIndex][index]._count.Hearts - 1,
+                },
+              };
+              queryClient.setQueryData(queryKey, shallow);
+            }
+          } else if (value) {
+            // 싱글 포스트인 경우
+            if (value.postId === postId) {
+              const shallow = {
+                ...value,
+                Hearts: value.Hearts.filter(
+                  (v) => v.userId !== session?.user?.email
+                ),
+                _count: {
+                  ...value._count,
+                  Hearts: value._count.Hearts - 1,
+                },
+              };
+              queryClient.setQueryData(queryKey, shallow);
+            }
+          }
+        }
+      });
+    },
+    onSettled() {
+      // queryClient.invalidateQueries({
+      //   queryKey: ['posts']
+      // }) invalidateQueries를 사용하면 위 코드에선   queryKey 가 ['posts'] 인 게시글 전부 다 다시 가져오게 됨
+      // 그래서 이걸 누르면 서버와 상태를 정확하게 일치시킬 수 있겠지. 근데 다 다시가져오는건 부담이야 그래서 해도 되고 안해도 되면
+      // 서버와 데이터는 어떻게 일치시켜 ?
+    },
+  });
+
+  const unheart = useMutation({
+    mutationFn: () => {
+      return fetch(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/posts/${postId}/heart`,
+        {
+          method: "delete",
+          credentials: "include",
+        }
+      );
+    },
+    onMutate() {
+      const queryCache = queryClient.getQueryCache();
+      const queryKeys = queryCache.getAll().map((cache) => cache.queryKey);
+      console.log("queryKeys", queryKeys);
+      queryKeys.forEach((queryKey) => {
+        if (queryKey[0] === "posts") {
+          const value: Post | InfiniteData<Post[]> | undefined =
+            queryClient.getQueryData(queryKey);
+          if (value && "pages" in value) {
+            console.log("array", value);
+            const obj = value.pages.flat().find((v) => v.postId === postId);
+            if (obj) {
+              // 존재는 하는지
+              const pageIndex = value.pages.findIndex((page) =>
+                page.includes(obj)
+              );
+              const index = value.pages[pageIndex].findIndex(
+                (v) => v.postId === postId
+              );
+              console.log("found index", index);
+              const shallow = { ...value };
+              value.pages = { ...value.pages };
+              value.pages[pageIndex] = [...value.pages[pageIndex]];
+              shallow.pages[pageIndex][index] = {
+                ...shallow.pages[pageIndex][index],
+                Hearts: shallow.pages[pageIndex][index].Hearts.filter(
+                  (v) => v.userId !== session?.user?.email
+                ),
+                _count: {
+                  ...shallow.pages[pageIndex][index]._count,
+                  Hearts: shallow.pages[pageIndex][index]._count.Hearts - 1,
+                },
+              };
+              queryClient.setQueryData(queryKey, shallow);
+            }
+          } else if (value) {
+            // 싱글 포스트인 경우
+            if (value.postId === postId) {
+              const shallow = {
+                ...value,
+                Hearts: value.Hearts.filter(
+                  (v) => v.userId !== session?.user?.email
+                ),
+                _count: {
+                  ...value._count,
+                  Hearts: value._count.Hearts - 1,
+                },
+              };
+              queryClient.setQueryData(queryKey, shallow);
+            }
+          }
+        }
+      });
+    },
+    onError() {
+      const queryCache = queryClient.getQueryCache();
+      const queryKeys = queryCache.getAll().map((cache) => cache.queryKey);
+      console.log("queryKeys", queryKeys);
+      queryKeys.forEach((queryKey) => {
+        if (queryKey[0] === "posts") {
+          console.log(queryKey[0]);
+          const value: Post | InfiniteData<Post[]> | undefined =
+            queryClient.getQueryData(queryKey);
+          if (value && "pages" in value) {
+            console.log("array", value);
+            const obj = value.pages.flat().find((v) => v.postId === postId);
+            if (obj) {
+              // 존재는 하는지
+              const pageIndex = value.pages.findIndex((page) =>
+                page.includes(obj)
+              );
+              const index = value.pages[pageIndex].findIndex(
+                (v) => v.postId === postId
+              );
+              console.log("found index", index);
+              const shallow = { ...value };
+              value.pages = { ...value.pages };
+              value.pages[pageIndex] = [...value.pages[pageIndex]];
+              shallow.pages[pageIndex][index] = {
+                ...shallow.pages[pageIndex][index],
+                Hearts: [{ userId: session?.user?.email as string }],
+                _count: {
+                  ...shallow.pages[pageIndex][index]._count,
+                  Hearts: shallow.pages[pageIndex][index]._count.Hearts + 1,
+                },
+              };
+              queryClient.setQueryData(queryKey, shallow);
+            }
+          } else if (value) {
+            // 싱글 포스트인 경우
+            if (value.postId === postId) {
+              const shallow = {
+                ...value,
+                Hearts: [{ userId: session?.user?.email as string }],
+                _count: {
+                  ...value._count,
+                  Hearts: value._count.Hearts + 1,
+                },
+              };
+              queryClient.setQueryData(queryKey, shallow);
+            }
+          }
+        }
+      });
+    },
+    onSettled() {},
+  });
+
+  const repost = useMutation({
+    mutationFn: () => {
+      return fetch(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/posts/${post.postId}/reposts`,
+        {
+          method: "post",
+          credentials: "include",
+        }
+      );
+    },
+    async onSuccess(response) {
+      const data = await response.json();
+      const queryCache = queryClient.getQueryCache();
+      const queryKeys = queryCache.getAll().map((cache) => cache.queryKey);
+      console.log("queryKeys", queryKeys);
+      queryKeys.forEach((queryKey) => {
+        if (queryKey[0] === "posts") {
+          console.log(queryKey[0]);
+          const value: Post | InfiniteData<Post[]> | undefined =
+            queryClient.getQueryData(queryKey);
+          if (value && "pages" in value) {
+            console.log("array", value);
+            const obj = value.pages.flat().find((v) => v.postId === postId);
+            if (obj) {
+              // 존재는 하는지
+              const pageIndex = value.pages.findIndex((page) =>
+                page.includes(obj)
+              );
+              const index = value.pages[pageIndex].findIndex(
+                (v) => v.postId === postId
+              );
+              console.log("found index", index);
+              const shallow = { ...value };
+              value.pages = { ...value.pages };
+              value.pages[pageIndex] = [...value.pages[pageIndex]];
+              shallow.pages[pageIndex][index] = {
+                ...shallow.pages[pageIndex][index],
+                Reposts: [{ userId: session?.user?.email as string }],
+                _count: {
+                  ...shallow.pages[pageIndex][index]._count,
+                  Reposts: shallow.pages[pageIndex][index]._count.Reposts + 1,
+                },
+              };
+              shallow.pages[0].unshift(data);
+              queryClient.setQueryData(queryKey, shallow);
+            }
+          } else if (value) {
+            // 싱글 포스트인 경우
+            if (value.postId === postId) {
+              const shallow = {
+                ...value,
+                Reposts: [{ userId: session?.user?.email as string }],
+                _count: {
+                  ...value._count,
+                  Reposts: value._count.Reposts + 1,
+                },
+              };
+              queryClient.setQueryData(queryKey, shallow);
+            }
+          }
+        }
+      });
+    },
+  });
+
+  const deleteRepost = useMutation({
+    mutationFn: () => {
+      return fetch(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/posts/${post.postId}/reposts`,
+        {
+          method: "delete",
+          credentials: "include",
+        }
+      );
+    },
+    onSuccess() {
+      const queryCache = queryClient.getQueryCache();
+      const queryKeys = queryCache.getAll().map((cache) => cache.queryKey);
+      console.log("queryKeys", queryKeys);
+      queryKeys.forEach((queryKey) => {
+        if (queryKey[0] === "posts") {
+          const value: Post | InfiniteData<Post[]> | undefined =
+            queryClient.getQueryData(queryKey);
+          if (value && "pages" in value) {
+            console.log("array", value);
+            const obj = value.pages.flat().find((v) => v.postId === postId);
+            const repost = value.pages
+              .flat()
+              .find(
+                (v) =>
+                  v.Original?.postId === postId &&
+                  v.User.id === session?.user?.email
+              );
+            if (obj) {
+              // 존재는 하는지
+              const pageIndex = value.pages.findIndex((page) =>
+                page.includes(obj)
+              );
+              const index = value.pages[pageIndex].findIndex(
+                (v) => v.postId === postId
+              );
+              console.log("found index", index);
+              const shallow = { ...value };
+              value.pages = { ...value.pages };
+              value.pages[pageIndex] = [...value.pages[pageIndex]];
+              shallow.pages[pageIndex][index] = {
+                ...shallow.pages[pageIndex][index],
+                Reposts: shallow.pages[pageIndex][index].Reposts.filter(
+                  (v) => v.userId !== session?.user?.email
+                ),
+                _count: {
+                  ...shallow.pages[pageIndex][index]._count,
+                  Reposts: shallow.pages[pageIndex][index]._count.Reposts - 1,
+                },
+              };
+              // 재게시 삭제
+              shallow.pages = shallow.pages.map((page) => {
+                return page.filter((v) => v.postId !== repost?.postId);
+              });
+              queryClient.setQueryData(queryKey, shallow);
+            }
+          } else if (value) {
+            // 싱글 포스트인 경우
+            if (value.postId === postId) {
+              const shallow = {
+                ...value,
+                Reposts: value.Reposts.filter(
+                  (v) => v.userId !== session?.user?.email
+                ),
+                _count: {
+                  ...value._count,
+                  Reposts: value._count.Reposts - 1,
+                },
+              };
+              queryClient.setQueryData(queryKey, shallow);
+            }
+          }
+        }
+      });
+    },
+  });
+
+  // const onClickComment: MouseEventHandler<HTMLButtonElement> = (e) => {
+  //   e.stopPropagation();
+
+  //   modalStore.setMode("comment");
+  //   modalStore.setData(post);
+  //   router.push("/compose/tweet");
+  //   // const formData = new FormData();
+  //   // formData.append('content', '답글 테스트');
+  //   // fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/posts/${post.postId}/comments`, {
+  //   //   method: 'post',
+  //   //   credentials: 'include',
+  //   //   body: formData
+  //   // });
+  // };
+  const onClickRepost: MouseEventHandler<HTMLButtonElement> = (e) => {
+    e.stopPropagation();
+    if (!reposted) {
+      repost.mutate();
+    } else {
+      deleteRepost.mutate();
+    }
+  };
+  const onClickHeart: MouseEventHandler<HTMLButtonElement> = (e) => {
+    e.stopPropagation();
+    if (liked) {
+      unheart.mutate();
+    } else {
+      heart.mutate();
+    }
+  };
 
   return (
     <div className={style.actionButtons}>
-      <div
-        className={cx(
-          style.commentButton,
-          { [style.commented]: commented },
-          white && style.white
-        )}
-        // 클래스네임 합성으로 정해둔 클래스가 입혀지게
-      >
-        <button onClick={onClickComment}>
+      <div className={cx(style.commentButton, white && style.white)}>
+        {/* <button onClick={onClickComment}>
           <svg width={24} viewBox="0 0 24 24" aria-hidden="true">
             <g>
               <path d="M1.751 10c0-4.42 3.584-8 8.005-8h4.366c4.49 0 8.129 3.64 8.129 8.13 0 2.96-1.607 5.68-4.196 7.11l-8.054 4.46v-3.69h-.067c-4.49.1-8.183-3.51-8.183-8.01zm8.005-6c-3.317 0-6.005 2.69-6.005 6 0 3.37 2.77 6.08 6.138 6.01l.351-.01h1.761v2.3l5.087-2.81c1.951-1.08 3.163-3.13 3.163-5.36 0-3.39-2.744-6.13-6.129-6.13H9.756z"></path>
             </g>
           </svg>
-        </button>
-        <div className={style.count}>{1 || ""}</div>
+        </button> */}
+        <div className={style.count}>{post._count?.Comments || ""}</div>
       </div>
       <div
         className={cx(
@@ -49,7 +472,7 @@ export default function ActionButtons({ white }: Props) {
             </g>
           </svg>
         </button>
-        <div className={style.count}>{1 || ""}</div>
+        <div className={style.count}>{post._count?.Reposts || ""}</div>
       </div>
       <div
         className={cx([
@@ -65,8 +488,15 @@ export default function ActionButtons({ white }: Props) {
             </g>
           </svg>
         </button>
-        <div className={style.count}>{0 || ""}</div>
+        <div className={style.count}>{post._count?.Hearts || ""}</div>
       </div>
     </div>
   );
 }
+
+// 이걸 사용하게 되면, 사용중인 쿼리키가 나오는데 그 형태는 ['posts','recommends'] 뭐 이런식임. posts의 경우 대분류, recommends 중분류 이런식으로 큰 단위부터 우선적으로 query에 할당했던거임
+// 하트 표시를 눌러서, api/posts/postId/heart 에 t / f 를 넘겨줄건데, 해당 옵션(onMutate)의 경우 mutationFn 함수가 실제 요청을 보내기전에
+// 먼저 실행된다. 이를 사용해서 옵티미스틱 업데이트를 해줄거임
+// onMutate가 먼저 실행되고 나면, mutationFn 을 호출해주고 비동기함수의 성공 / 실패 결과로 onSuccess, onError가 실행된다
+// heart.mutate();에서 mutate() 를 호출하게 되면 onMutate -> mutationFn -> onSuccess or onError -> onSettled
+// 만약 onMutate 옵션을 사용하지 않는다면, mutationFn 이 바로 실행된다.

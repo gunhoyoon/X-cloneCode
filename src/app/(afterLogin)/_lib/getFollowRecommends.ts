@@ -5,9 +5,11 @@ export async function getFollowRecommends() {
       // 해당 태그의 대한 기준을 삼는게 중요함.
     },
     // cache: "no-store",
-    // 해당 next : {tags}와 cache 부분은 리액트 쿼리에서 하는게 아니라, nextjs 에서 제공하는 서버쪽 캐싱임. 우선 이 정도만
+    credentials: "include",
+    // 서버에서 내가 누군지 알아야되니까 옵션 추가 해줌, 내 자신은 팔로우 추천에서 빼줘야하니까
   });
-
+  // 여기 데이터도 팔로우수가 많은 순으로 정렬해서 넘어옴, 그리고 내 계정은 뜨지않도록 해놈..
+  // 일단 내 정보가 안나오도록 또는 로그인 시만 사용가능한 데이터 이런 구조라면 서버에 요청할 때 꼭 쿠키를 담아서 요청해야됨
   if (!res.ok) {
     throw new Error("Failed to fetch data");
   }

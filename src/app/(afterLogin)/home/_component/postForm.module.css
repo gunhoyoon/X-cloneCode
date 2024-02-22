@@ -26,6 +26,10 @@
 .postInputSection {
   flex: 1;
 }
+.postInputSection textarea {
+  max-height: 200px;
+  overflow-y: scroll;
+}
 .postButtonSection {
   width: 100%;
 }

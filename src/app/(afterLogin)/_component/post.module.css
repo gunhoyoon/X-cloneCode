@@ -27,6 +27,7 @@
 }
 .postReposted svg {
   fill: rgb(83, 100, 113);
+  margin-right: 4px;
 }
 
 .postUserSection {

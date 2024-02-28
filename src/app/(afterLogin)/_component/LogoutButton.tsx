@@ -3,6 +3,7 @@ import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import style from "./logoutButton.module.css";
 import { Session } from "@auth/core/types";
+import { QueryClient } from "@tanstack/react-query";
 
 type Props = {
   me: Session | null;
@@ -10,6 +11,7 @@ type Props = {
 
 export default function LogoutButton({ me }: Props) {
   const router = useRouter();
+  const queryClient = new QueryClient();
   // const { data: me } = useSession();
   // 클라이언트에서 useSession 사용해서 내 정보 불러오기
   // 처음 회원가입하고, signIn 시켜주고 홈으로 redirect 시켜줌
@@ -20,8 +22,26 @@ export default function LogoutButton({ me }: Props) {
   // 서버에서 데이터가
 
   const onLogOut = () => {
+    queryClient.invalidateQueries({
+      queryKey: ["posts"],
+    });
+    queryClient.invalidateQueries({
+      queryKey: ["users"],
+    });
     signOut({ redirect: false }) //
       .then(() => {
+        fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/logout`, {
+          method: "post",
+          credentials: "include",
+        });
+        // 백엔드쪽에서도 완전히 로그아웃(쿠키 삭제), 클라이언트쪽에선 signOut이 하면 클라이언트 쿠키 삭제해줌
+        // const handleLogout = async () => {
+        //   // 사용자 정의 쿠키 제거
+        //   document.cookie = 'myCustomCookie=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+
+        //   // NextAuth.js 로그아웃
+        //   await signOut({ redirect: false });
+        // }; 예시
         router.replace("/");
       });
   };

@@ -19,7 +19,7 @@ export interface Post {
     Reposts: number;
     Comments: number;
   };
-  Original?: Post; // 재게시
+  Original?: Post; // 재게시, 근데 없을 수도 있음
   Parent?: Post; // 답글
 }
 

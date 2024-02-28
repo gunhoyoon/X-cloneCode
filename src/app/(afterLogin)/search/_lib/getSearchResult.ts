@@ -9,7 +9,9 @@ export const getSearchResult: QueryFunction<
   // getSearchResult 에 들어온 queryKey 받아서 구조분해할당한거, searchParams.q만 따로 사용하려고
   const urlSearchParams = new URLSearchParams(searchParams);
   const res = await fetch(
-    `http://localhost:9090/api/posts?${urlSearchParams.toString()}`, // searchParams.q의 값은 따로 넘겨주고, 나머지는 searchParams.toString() 으로 같이 넘겨주기
+    `${
+      process.env.NEXT_PUBLIC_BASE_URL
+    }/api/posts?${urlSearchParams.toString()}`, // searchParams.q의 값은 따로 넘겨주고, 나머지는 searchParams.toString() 으로 같이 넘겨주기
     // 일반객체를 toString() 하는 경우 [object object] 나옴
     // 이 부분에서 해시값을 받아서,
     {

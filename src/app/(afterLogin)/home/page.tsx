@@ -7,13 +7,13 @@ import TabDeciderSuspense from "./_component/TabDeciderSuspense";
 import Loading from "./loading";
 import TabDecider from "./_component/TabDecider";
 import { auth } from "@/auth";
+import { Metadata } from "next";
 
-// 해당 함수는 서버컴포넌트이기 때문에 서버에서 실행이 된다.
-// 서버에선 http://localhost:9090/api/postRecommends 주소를 통해 받아온 데이터를 서버에 자동으로 저장(캐싱)을 함
-// 캐싱을 하기 떄문에 posts, recommends -> 즉 afterLogin 의 홈페이지는 Pending, loading에서의 스피너나 대체페이지가 의미가 없음
-// 해당 페이지의 경우 서버에서 미리 불러와 초기 로드시 클라이언트에게 넘겨주기 때문에 로딩이나 팬딩의 의미 자체가 존재하지 않는거임
-// 근데 첫 페이지부터 로딩바를 보여주고 싶으면 prefetchInfiniteQuery 이거 안사용하면 됨
-// 이걸 사용안하면 기존에 postRecommend 에 있는 함수가 데이터 요청할거고 로딩바도 보여지게 되겠지,ssr도 안될거임. 근데 기존 x에선 컨텐츠 ssr로 안해둿음
+export const metadata: Metadata = {
+  title: "홈 / Z",
+  description: "홈",
+};
+
 export default async function HomePage() {
   const session = await auth();
   // 서버에서 세션 불러오는 법 / 클라이언트는 useSession

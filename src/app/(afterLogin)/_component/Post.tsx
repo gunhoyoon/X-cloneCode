@@ -25,10 +25,33 @@ const stopPropagetion: MouseEventHandler<HTMLAnchorElement> = (e) => {
 };
 
 export default function Post({ noImage, post }: Props) {
-  const target = post;
-
+  let target = post;
+  console.log("target", target);
+  if (post.Original) {
+    target = post.Original;
+    // 아 만약 재게시글이라면, post에 Original이 들어있을거니까,
+    // 그 원본과 재게시라는 텍스트를 보여주기 위함.
+    // 그냥 재게시면 : 재게시글입니다 + 원본,
+    // 아니면 원본.
+    // 기존 원본 + 글 까지니까, 포스트에 텍스트 추가하는게 아니라 하날 더 그려야하는거니까 그 오리지날을 target에 담는거임
+  }
   return (
     <PostArticle post={target}>
+      {post.Original && (
+        <div className={style.postReposted}>
+          <svg
+            viewBox="0 0 24 24"
+            width={16}
+            aria-hidden="true"
+            className="r-14j79pv r-4qtqp9 r-yyyyoo r-10ptun7 r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1janqcz"
+          >
+            <g>
+              <path d="M4.75 3.79l4.603 4.3-1.706 1.82L6 8.38v7.37c0 .97.784 1.75 1.75 1.75H13V20H7.75c-2.347 0-4.25-1.9-4.25-4.25V8.38L1.853 9.91.147 8.09l4.603-4.3zm11.5 2.71H11V4h5.25c2.347 0 4.25 1.9 4.25 4.25v7.37l1.647-1.53 1.706 1.82-4.603 4.3-4.603-4.3 1.706-1.82L18 15.62V8.25c0-.97-.784-1.75-1.75-1.75z"></path>
+            </g>
+          </svg>
+          재게시했습니다
+        </div>
+      )}
       <div className={style.postWrapper}>
         <div className={style.postUserSection}>
           <Link
@@ -52,6 +75,16 @@ export default function Post({ noImage, post }: Props) {
               {dayjs(target.createdAt).fromNow(true)}
             </span>
           </div>
+          {target.Parent && (
+            <Link
+              href={`/${target.Parent.User.id}`}
+              style={{ color: "rgb(29,155,240)" }}
+              onClick={stopPropagetion}
+            >
+              {target?.Parent?.User.id}에게 보내는 답글
+            </Link>
+          )}
+          {/* 답글도 결국 포스트임, 포스트와 동시에 parent가 있다면, 그에 관한 표시만해주면 됨 */}
           <div>{target.content}</div>
           {!noImage && (
             <div>

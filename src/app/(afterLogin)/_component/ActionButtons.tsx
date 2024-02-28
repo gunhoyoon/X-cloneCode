@@ -10,7 +10,8 @@ import {
 import { Post } from "@/model/Post";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-// import { useModalStore } from "@/store/modal";
+import { useModalStore } from "@/store/modal";
+import { useTodoStore } from "@/store/todo";
 
 type Props = {
   white?: boolean;
@@ -20,7 +21,17 @@ export default function ActionButtons({ white, post }: Props) {
   const queryClient = useQueryClient();
   const { data: session } = useSession();
   const router = useRouter();
-  // const modalStore = useModalStore();
+
+  const modalStore = useModalStore();
+  const { setData, setMode, reset } = modalStore;
+  console.log("modalStore", modalStore);
+
+  // const TodoStore = useTodoStore();
+  // const { setText, setDone, reset: resetTodo } = TodoStore;
+  // console.log("TodoStore", TodoStore);
+  // if (TodoStore.text === "") {
+  //   setText("안녕허세요");
+  // }
 
   const reposted = !!post.Reposts?.find(
     (v) => v.userId === session?.user?.email
@@ -41,14 +52,14 @@ export default function ActionButtons({ white, post }: Props) {
     onMutate() {
       const queryCache = queryClient.getQueryCache();
       const queryKeys = queryCache.getAll().map((cache) => cache.queryKey);
-      console.log("queryKeys", queryKeys);
+      // console.log("queryKeys", queryKeys);
       queryKeys.forEach((queryKey) => {
         if (queryKey[0] === "posts") {
-          console.log(queryKey[0]);
+          // console.log(queryKey[0]);
           const value: Post | InfiniteData<Post[]> | undefined =
             queryClient.getQueryData(queryKey);
           if (value && "pages" in value) {
-            console.log("array", value);
+            // console.log("array", value);
             const obj = value.pages.flat().find((v) => v.postId === postId);
             if (obj) {
               // 존재는 하는지
@@ -58,7 +69,7 @@ export default function ActionButtons({ white, post }: Props) {
               const index = value.pages[pageIndex].findIndex(
                 (v) => v.postId === postId
               );
-              console.log("found index", index);
+              // console.log("found index", index);
               const shallow = { ...value };
               value.pages = { ...value.pages };
               value.pages[pageIndex] = [...value.pages[pageIndex]];
@@ -283,19 +294,27 @@ export default function ActionButtons({ white, post }: Props) {
         }
       );
     },
+    // api 이 성공하게 되면 / onSuccess, 즉 성공에 따른 업데이트,
     async onSuccess(response) {
       const data = await response.json();
+      // 이 성공한 데이터를 클라이언트에 입혀줘야함
       const queryCache = queryClient.getQueryCache();
+      // 사용중인 쿼리키 가져오기
       const queryKeys = queryCache.getAll().map((cache) => cache.queryKey);
+      // 다 가져오고, cache에 queryKey 속성만 전부 담아줌
       console.log("queryKeys", queryKeys);
       queryKeys.forEach((queryKey) => {
         if (queryKey[0] === "posts") {
+          // 하나씩 돌면서 쿼리키 대분류가 posts인거 찾음
           console.log(queryKey[0]);
           const value: Post | InfiniteData<Post[]> | undefined =
             queryClient.getQueryData(queryKey);
+          // 그 쿼리키가 들어간 데이터 value 에 담음
           if (value && "pages" in value) {
             console.log("array", value);
             const obj = value.pages.flat().find((v) => v.postId === postId);
+            // 해당 데이터 구조가 2차원배열임. 일단 flat으로 일차원 배열로 만들고, 하나씩 순회하면서 postId가
+            // 프롭으로 전달받은 해당 Post의 id와 일치하는지 비교
             if (obj) {
               // 존재는 하는지
               const pageIndex = value.pages.findIndex((page) =>
@@ -306,6 +325,7 @@ export default function ActionButtons({ white, post }: Props) {
               );
               console.log("found index", index);
               const shallow = { ...value };
+              // 불변성
               value.pages = { ...value.pages };
               value.pages[pageIndex] = [...value.pages[pageIndex]];
               shallow.pages[pageIndex][index] = {
@@ -316,8 +336,10 @@ export default function ActionButtons({ white, post }: Props) {
                   Reposts: shallow.pages[pageIndex][index]._count.Reposts + 1,
                 },
               };
+              // 쉘로우 파고파고 파서 Reposts 접근해서 카운터 올려주기
               shallow.pages[0].unshift(data);
               queryClient.setQueryData(queryKey, shallow);
+              // 쿼리키 데이터 shallow 넣어주기
             }
           } else if (value) {
             // 싱글 포스트인 경우
@@ -343,12 +365,13 @@ export default function ActionButtons({ white, post }: Props) {
       return fetch(
         `${process.env.NEXT_PUBLIC_BASE_URL}/api/posts/${post.postId}/reposts`,
         {
-          method: "delete",
+          method: "delete", // 재개시 삭제 delete
           credentials: "include",
         }
       );
     },
     onSuccess() {
+      // delete는 그냥 지워지고 끝나니까 데이터를 가지고 뭘 할게 없음
       const queryCache = queryClient.getQueryCache();
       const queryKeys = queryCache.getAll().map((cache) => cache.queryKey);
       console.log("queryKeys", queryKeys);
@@ -414,21 +437,21 @@ export default function ActionButtons({ white, post }: Props) {
       });
     },
   });
+  // 답글, 답글은 원래 뭐에 관한 답글인지 parent
+  const onClickComment: MouseEventHandler<HTMLButtonElement> = (e) => {
+    e.stopPropagation();
+    // 전역으로 설정한 modalStore의 mode의 값을 comment로 설정, 지금 상태가 답글이다 라는걸 알려줌
+    setMode("comment");
+    // 그리고 데이터는 post, 어떠한 포스트 하나에 대한 답글이기 때문에, Post 타입
+    setData(post);
+    router.push("/compose/tweet");
 
-  // const onClickComment: MouseEventHandler<HTMLButtonElement> = (e) => {
-  //   e.stopPropagation();
-
-  //   modalStore.setMode("comment");
-  //   modalStore.setData(post);
-  //   router.push("/compose/tweet");
-  //   // const formData = new FormData();
-  //   // formData.append('content', '답글 테스트');
-  //   // fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/posts/${post.postId}/comments`, {
-  //   //   method: 'post',
-  //   //   credentials: 'include',
-  //   //   body: formData
-  //   // });
-  // };
+    // 답글을 달면 compose/tweet 모달이 나와야하는데, 그 compose/tweet 한테 내가 어떠한 상태인지 알려줘야함
+    // 어떠한 글의 답글인지 postId같은걸 넘겨줘야함, 컴포넌트 간의 상태 공유가 필요한데 이걸 저스탠드로 할거임
+    // 컴포넌트 간의 상태 공유, react query , Context API, Redux 사용이 가능한데,
+    // react query 데이터는 데이터 패칭에 좀 더 무게를 두고 있고, context API 보다 최적화가 잘 되어있기 때문에 사용
+  };
+  // 재개시, 오리지널 속성이 있음. 아마 클릭하면 원글로 가게 할 수 있음
   const onClickRepost: MouseEventHandler<HTMLButtonElement> = (e) => {
     e.stopPropagation();
     if (!reposted) {
@@ -449,13 +472,13 @@ export default function ActionButtons({ white, post }: Props) {
   return (
     <div className={style.actionButtons}>
       <div className={cx(style.commentButton, white && style.white)}>
-        {/* <button onClick={onClickComment}>
+        <button onClick={onClickComment}>
           <svg width={24} viewBox="0 0 24 24" aria-hidden="true">
             <g>
               <path d="M1.751 10c0-4.42 3.584-8 8.005-8h4.366c4.49 0 8.129 3.64 8.129 8.13 0 2.96-1.607 5.68-4.196 7.11l-8.054 4.46v-3.69h-.067c-4.49.1-8.183-3.51-8.183-8.01zm8.005-6c-3.317 0-6.005 2.69-6.005 6 0 3.37 2.77 6.08 6.138 6.01l.351-.01h1.761v2.3l5.087-2.81c1.951-1.08 3.163-3.13 3.163-5.36 0-3.39-2.744-6.13-6.129-6.13H9.756z"></path>
             </g>
           </svg>
-        </button> */}
+        </button>
         <div className={style.count}>{post._count?.Comments || ""}</div>
       </div>
       <div

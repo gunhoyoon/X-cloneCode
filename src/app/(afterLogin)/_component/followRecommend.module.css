@@ -4,7 +4,7 @@
   display: flex;
 }
 
-.userInfo {
+.userLogo {
   width: 40px;
   margin-right: 12px;
 }
@@ -33,6 +33,10 @@
 }
 
 .followButtonSection {
+  width: 76px;
+}
+
+.followButtonSection button {
   border: none;
   cursor: pointer;
   width: 100%;
@@ -44,14 +48,13 @@
   border-radius: 16px;
 }
 .followButtonSection.followed button {
-  background: #fff;
+  background: white;
   color: black;
+  border: 1px solid grey;
 }
-
 .followButtonSection button:hover {
   background-color: rgb(39, 44, 48);
 }
-
 .followButtonSection.followed button:hover {
   background: lightgray;
 }

@@ -26,8 +26,8 @@ export const getSinglePostServer = async ({
       // 때에 따라 잘 사용해야겠지 ....
     }
   );
-  // revalidateTag('posts')
-  // revalidatePath('/home') 이런식으로 수동적으로 갱신하는 방법이 있음
+  // revalidateTag('posts') // posts 태그 들어간 캐시 다 갱신
+  // revalidatePath('/home') // home페이지에 있는 요청 다 갱신,  이런식으로 수동적으로 갱신하는 방법이 있음
   if (!res.ok) {
     throw new Error("Failed to fetch data");
   }

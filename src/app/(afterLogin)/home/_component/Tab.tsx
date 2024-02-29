@@ -21,6 +21,7 @@ export default function Tab() {
       <div className={styles.homeText}>홈</div>
       <div className={styles.homeTab}>
         <div onClick={onClickRec}>
+          추천
           <div className={styles.tabIndicator} hidden={tab === "fol"}>
             {/* 텝이 fol 라면 indicator 텝 선택 시 밑줄 숨김, 이 div는 엑티브 밑줄 */}
           </div>

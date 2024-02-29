@@ -29,31 +29,6 @@ export default function UserInfo({ username, session }: Props) {
       gcTime: 300 * 1000,
     }
   );
-  //   console.dir(error); 에러는 객체 형태/ 상세하게 보기 위해서 dir 찍음(디렉토리)
-  // console.log("user", user); 현재 내가 보고있는 프로필 페이지, [username의 데이터]
-  if (error) {
-    return (
-      <>
-        <div className={style.header}>
-          <BackButton />
-          <h3 className={style.headerTitle}>프로필 </h3>
-        </div>
-        <div className={style.userZone}>
-          <div className={style.userImage}></div>
-          <div className={style.userName}>
-            <div>@{username}</div>
-          </div>
-        </div>
-        <div className={style.notFoundUser}>계정이 존재하지 않음</div>
-      </>
-    );
-  }
-  // 팔로우를 누르면, 팔로우된
-  const followed = !!user?.Followers?.find(
-    (v) => v.id === session?.user?.email
-  );
-  console.log("followed", followed);
-
   const follow = useMutation({
     mutationFn: (userId: string) => {
       return fetch(
@@ -149,7 +124,6 @@ export default function UserInfo({ username, session }: Props) {
       }
     },
   });
-
   const unFollow = useMutation({
     mutationFn: (userId: string) => {
       return fetch(
@@ -234,6 +208,30 @@ export default function UserInfo({ username, session }: Props) {
       }
     },
   });
+  //   console.dir(error); 에러는 객체 형태/ 상세하게 보기 위해서 dir 찍음(디렉토리)
+  // console.log("user", user); 현재 내가 보고있는 프로필 페이지, [username의 데이터]
+  if (error) {
+    return (
+      <>
+        <div className={style.header}>
+          <BackButton />
+          <h3 className={style.headerTitle}>프로필 </h3>
+        </div>
+        <div className={style.userZone}>
+          <div className={style.userImage}></div>
+          <div className={style.userName}>
+            <div>@{username}</div>
+          </div>
+        </div>
+        <div className={style.notFoundUser}>계정이 존재하지 않음</div>
+      </>
+    );
+  }
+  // 팔로우를 누르면, 팔로우된
+  const followed = !!user?.Followers?.find(
+    (v) => v.id === session?.user?.email
+  );
+  console.log("followed", followed);
 
   const onFollow: MouseEventHandler<HTMLButtonElement> = (e) => {
     e.stopPropagation();

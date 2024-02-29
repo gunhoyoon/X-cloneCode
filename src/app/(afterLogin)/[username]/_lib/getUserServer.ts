@@ -1,3 +1,5 @@
+import { revalidateTag } from "next/cache";
+import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 
 export const getUserServer = async ({
@@ -15,6 +17,7 @@ export const getUserServer = async ({
     {
       next: {
         tags: ["users", username],
+        revalidate: 3600, // 초 단위 1시간
       },
 
       headers: { Cookie: cookies().toString() },
@@ -26,6 +29,8 @@ export const getUserServer = async ({
       // 그래서 함수를 분리해줄거임, 옵션만 다르게 해서 같은 코드를 사용하면 되니까, getUserServer 이런식으로 만들어서, 한쪽에선 client에 적합하게, 한쪽에선 server에 적합하게
     }
   );
+  // revalidatePath("/home");
+  // revalidateTag("users");
 
   if (!res.ok) {
     throw new Error("Failed to fetch data");

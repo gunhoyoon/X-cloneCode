@@ -42,6 +42,7 @@ export default function LogoutButton({ me }: Props) {
         //   // NextAuth.js 로그아웃
         //   await signOut({ redirect: false });
         // }; 예시
+        router.refresh();
         router.replace("/");
       });
   };

@@ -29,6 +29,18 @@ export async function generateMetadata({ params }: Props) {
   return {
     title: `${user.nickname} (${user.id}) / Z`,
     description: `${user.nickname} (${user.id}) 프로필`,
+    // openGraph: {
+    //   title: `${user.nickname} (${user.id}) / Z`,
+    //   description: `${user.nickname} (${user.id}) 프로필`,
+    //   images: [
+    //     {
+    //       url: `https://practice.com${user.image}`,
+    //       width: 400,
+    //       height: 400,
+    //     },
+    //   ],
+    // },
+    // 이런식으로 카톡 공유용 데이터 넣어줄 수 있음
   };
 }
 

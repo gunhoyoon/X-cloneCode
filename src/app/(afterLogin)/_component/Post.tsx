@@ -26,7 +26,7 @@ const stopPropagetion: MouseEventHandler<HTMLAnchorElement> = (e) => {
 
 export default function Post({ noImage, post }: Props) {
   let target = post;
-  console.log("target", target);
+  // console.log("target", target);
   if (post.Original) {
     target = post.Original;
     // 아 만약 재게시글이라면, post에 Original이 들어있을거니까,

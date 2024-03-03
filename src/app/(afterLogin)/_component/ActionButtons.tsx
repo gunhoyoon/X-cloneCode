@@ -24,7 +24,7 @@ export default function ActionButtons({ white, post }: Props) {
 
   const modalStore = useModalStore();
   const { setData, setMode, reset } = modalStore;
-  console.log("modalStore", modalStore);
+  // console.log("modalStore", modalStore);
 
   // const TodoStore = useTodoStore();
   // const { setText, setDone, reset: resetTodo } = TodoStore;
@@ -302,7 +302,7 @@ export default function ActionButtons({ white, post }: Props) {
       // 사용중인 쿼리키 가져오기
       const queryKeys = queryCache.getAll().map((cache) => cache.queryKey);
       // 다 가져오고, cache에 queryKey 속성만 전부 담아줌
-      console.log("queryKeys", queryKeys);
+      // console.log("queryKeys", queryKeys);
       queryKeys.forEach((queryKey) => {
         if (queryKey[0] === "posts") {
           // 하나씩 돌면서 쿼리키 대분류가 posts인거 찾음
@@ -311,7 +311,7 @@ export default function ActionButtons({ white, post }: Props) {
             queryClient.getQueryData(queryKey);
           // 그 쿼리키가 들어간 데이터 value 에 담음
           if (value && "pages" in value) {
-            console.log("array", value);
+            // console.log("array", value);
             const obj = value.pages.flat().find((v) => v.postId === postId);
             // 해당 데이터 구조가 2차원배열임. 일단 flat으로 일차원 배열로 만들고, 하나씩 순회하면서 postId가
             // 프롭으로 전달받은 해당 Post의 id와 일치하는지 비교

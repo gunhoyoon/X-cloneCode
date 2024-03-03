@@ -18,7 +18,7 @@ export default async function HomePage() {
   const session = await auth();
   // 서버에서 세션 불러오는 법 / 클라이언트는 useSession
   // throw "으악";
-
+  console.log("session?.user", session?.user);
   return (
     <main className={styles.main}>
       <TabProvider>

@@ -1,58 +1,53 @@
 "use client";
-import React, { MouseEventHandler } from "react";
-import BackButton from "./BackButton";
-import style from "../[username]/profile.module.css";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+
+import style from "@/app/(afterLogin)/[username]/profile.module.css";
+import BackButton from "@/app/(afterLogin)/_component/BackButton";
+import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { User } from "@/model/User";
-import { getUserClient } from "../[username]/_lib/getUser";
+import { getUser } from "@/app/(afterLogin)/[username]/_lib/getUser";
 import cx from "classnames";
-import { Session } from "next-auth";
+import { MouseEventHandler } from "react";
+import { Session } from "@auth/core/types";
+import { useRouter } from "next/navigation";
+
 type Props = {
   username: string;
   session: Session | null;
 };
 export default function UserInfo({ username, session }: Props) {
-  // console.log("username", username);
-  console.log("session", session);
-  const queryClient = useQueryClient();
+  const router = useRouter();
   const { data: user, error } = useQuery<
     User,
     Object,
     User,
     [_1: string, _2: string]
-  >(
-    // 제네릭에 들어간<User , Object , User>은 useQuery 를 사용했을 때 리턴값, Object은 모든 다 포함(error에 관한 타입 처리임 우선 이렇게 처리해둠)
-    {
-      queryKey: ["users", username], // [_1: string, _2 : string] 은 queryKey에 관한 타입
-      queryFn: getUserClient,
-      staleTime: 60 * 1000,
-      gcTime: 300 * 1000,
-    }
-  );
+  >({
+    queryKey: ["users", username],
+    queryFn: getUser,
+    staleTime: 60 * 1000, // fresh -> stale, 5분이라는 기준
+    gcTime: 300 * 1000,
+  });
+  const queryClient = useQueryClient();
   const follow = useMutation({
     mutationFn: (userId: string) => {
+      console.log("follow", userId);
       return fetch(
         `${process.env.NEXT_PUBLIC_BASE_URL}/api/users/${userId}/follow`,
         {
+          credentials: "include",
           method: "post",
-          credentials: "include",
         }
       );
     },
-    onMutate: (id: string) => {
+    onMutate(userId: string) {
       const value: User[] | undefined = queryClient.getQueryData([
         "users",
         "followRecommends",
       ]);
-      console.log("value", value);
-      // users/followRecommends 는 추천인이고, 그 아이디들이 각각나옴 (우측 추천인창)
-      // 그 한명한명의 아이디랑, id 현재 보고있는 username의 아이디, 그래서 현재 보고있는 프로필 페이지와 추천창에 있는 유저가 같냐
-      // 그에 따른 ui 처리도 필요하기 때문에 이런 조건이 필요함
-
       if (value) {
-        const index = value.findIndex((v) => v.id === id);
-        const hasId = index > -1;
-        if (hasId) {
+        const index = value.findIndex((v) => v.id === userId);
+        if (index > -1) {
+          console.log(value, userId, index);
           const shallow = [...value];
           shallow[index] = {
             ...shallow[index],
@@ -65,10 +60,12 @@ export default function UserInfo({ username, session }: Props) {
           queryClient.setQueryData(["users", "followRecommends"], shallow);
         }
       }
-
-      const value2: User | undefined = queryClient.getQueryData(["users", id]);
+      const value2: User | undefined = queryClient.getQueryData([
+        "users",
+        userId,
+      ]);
       if (value2) {
-        const shallow = {
+        const shallow: User = {
           ...value2,
           Followers: [{ id: session?.user?.email as string }],
           _count: {
@@ -76,23 +73,19 @@ export default function UserInfo({ username, session }: Props) {
             Followers: value2._count?.Followers + 1,
           },
         };
-        queryClient.setQueryData(["users", id], shallow);
+        queryClient.setQueryData(["users", userId], shallow);
       }
     },
-    onSuccess: () => {
-      // queryClient.invalidateQueries('userData');
-      console.log("sadasdss");
-    },
-    onError: (error, id: string) => {
+    onError(error, userId: string) {
+      console.error(error);
       const value: User[] | undefined = queryClient.getQueryData([
         "users",
         "followRecommends",
       ]);
-
       if (value) {
-        const index = value.findIndex((v) => v.id === id);
-        const hasId = index > -1;
-        if (hasId) {
+        const index = value.findIndex((v) => v.id === userId);
+        console.log(value, userId, index);
+        if (index > -1) {
           const shallow = [...value];
           shallow[index] = {
             ...shallow[index],
@@ -106,43 +99,46 @@ export default function UserInfo({ username, session }: Props) {
           };
           queryClient.setQueryData(["users", "followRecommends"], shallow);
         }
-      }
-
-      const value2: User | undefined = queryClient.getQueryData(["users", id]);
-      if (value2) {
-        const shallow = {
-          ...value2,
-          Followers: value2.Followers.filter(
-            (v) => v.id !== session?.user?.email
-          ),
-          _count: {
-            ...value2._count,
-            Followers: value2._count?.Followers - 1,
-          },
-        };
-        queryClient.setQueryData(["users", id], shallow);
+        const value2: User | undefined = queryClient.getQueryData([
+          "users",
+          userId,
+        ]);
+        if (value2) {
+          const shallow = {
+            ...value2,
+            Followers: value2.Followers.filter(
+              (v) => v.id !== session?.user?.email
+            ),
+            _count: {
+              ...value2._count,
+              Followers: value2._count?.Followers - 1,
+            },
+          };
+          queryClient.setQueryData(["users", userId], shallow);
+        }
       }
     },
   });
-  const unFollow = useMutation({
+  const unfollow = useMutation({
     mutationFn: (userId: string) => {
+      console.log("unfollow", userId);
       return fetch(
         `${process.env.NEXT_PUBLIC_BASE_URL}/api/users/${userId}/follow`,
         {
-          method: "delete",
           credentials: "include",
+          method: "delete",
         }
       );
     },
-    onMutate: (id: string) => {
+    onMutate(userId: string) {
       const value: User[] | undefined = queryClient.getQueryData([
         "users",
         "followRecommends",
       ]);
       if (value) {
-        const index = value.findIndex((v) => v.id === id);
-        const hasId = index > -1;
-        if (hasId) {
+        const index = value.findIndex((v) => v.id === userId);
+        console.log(value, userId, index);
+        if (index > -1) {
           const shallow = [...value];
           shallow[index] = {
             ...shallow[index],
@@ -156,32 +152,36 @@ export default function UserInfo({ username, session }: Props) {
           };
           queryClient.setQueryData(["users", "followRecommends"], shallow);
         }
-      }
-      const value2: User | undefined = queryClient.getQueryData(["users", id]);
-      if (value2) {
-        const shallow = {
-          ...value2,
-          Followers: value2.Followers.filter(
-            (v) => v.id !== session?.user?.email
-          ),
-          _count: {
-            ...value2._count,
-            Followers: value2._count?.Followers - 1,
-          },
-        };
-        queryClient.setQueryData(["users", id], shallow);
+        const value2: User | undefined = queryClient.getQueryData([
+          "users",
+          userId,
+        ]);
+        if (value2) {
+          const shallow = {
+            ...value2,
+            Followers: value2.Followers.filter(
+              (v) => v.id !== session?.user?.email
+            ),
+            _count: {
+              ...value2._count,
+              Followers: value2._count?.Followers - 1,
+            },
+          };
+          queryClient.setQueryData(["users", userId], shallow);
+        }
       }
     },
-    onError: (error, id: string) => {
+    onError(error, userId: string) {
+      console.error(error);
       const value: User[] | undefined = queryClient.getQueryData([
         "users",
         "followRecommends",
       ]);
       if (value) {
-        const index = value.findIndex((v) => v.id === id);
-        const shallow = [...value];
-        const hasId = index > -1;
-        if (hasId) {
+        const index = value.findIndex((v) => v.id === userId);
+        console.log(value, userId, index);
+        if (index > -1) {
+          const shallow = [...value];
           shallow[index] = {
             ...shallow[index],
             Followers: [{ id: session?.user?.email as string }],
@@ -193,29 +193,32 @@ export default function UserInfo({ username, session }: Props) {
           queryClient.setQueryData(["users", "followRecommends"], shallow);
         }
       }
-
-      const value2: User | undefined = queryClient.getQueryData(["users", id]);
+      const value2: User | undefined = queryClient.getQueryData([
+        "users",
+        userId,
+      ]);
       if (value2) {
         const shallow = {
           ...value2,
-          Followers: [{ id: session?.user?.email as string }],
+          Followers: [{ userId: session?.user?.email as string }],
           _count: {
             ...value2._count,
             Followers: value2._count?.Followers + 1,
           },
         };
-        queryClient.setQueryData(["users", id], shallow);
+        queryClient.setQueryData(["users", userId], shallow);
       }
     },
   });
-  //   console.dir(error); 에러는 객체 형태/ 상세하게 보기 위해서 dir 찍음(디렉토리)
-  // console.log("user", user); 현재 내가 보고있는 프로필 페이지, [username의 데이터]
+
+  console.log("error");
+  console.dir(error);
   if (error) {
     return (
       <>
         <div className={style.header}>
           <BackButton />
-          <h3 className={style.headerTitle}>프로필 </h3>
+          <h3 className={style.headerTitle}>프로필</h3>
         </div>
         <div className={style.userZone}>
           <div className={style.userImage}></div>
@@ -223,31 +226,45 @@ export default function UserInfo({ username, session }: Props) {
             <div>@{username}</div>
           </div>
         </div>
-        <div className={style.notFoundUser}>계정이 존재하지 않음</div>
+        <div
+          style={{
+            height: 100,
+            alignItems: "center",
+            fontSize: 31,
+            fontWeight: "bold",
+            justifyContent: "center",
+            display: "flex",
+          }}
+        >
+          계정이 존재하지 않음
+        </div>
       </>
     );
   }
-  // 팔로우를 누르면, 팔로우된
-  const followed = !!user?.Followers?.find(
-    (v) => v.id === session?.user?.email
-  );
-  console.log("followed", followed);
+  if (!user) {
+    return null;
+  }
+
+  const followed = user.Followers?.find((v) => v.id === session?.user?.email);
+  console.log(session?.user?.email, followed);
 
   const onFollow: MouseEventHandler<HTMLButtonElement> = (e) => {
     e.stopPropagation();
     e.preventDefault();
-    if (session?.user === null) {
-      return alert("로그인 후 사용할 수 있습니다");
-    }
-
-    // console.log("followed", followed);
+    console.log("follow", followed, user.id);
     if (followed) {
-      unFollow.mutate(user?.id as string);
+      unfollow.mutate(user.id);
     } else {
-      follow.mutate(user?.id as string);
+      follow.mutate(user.id);
     }
   };
-  if (!user) return null;
+
+  const onMessage = () => {
+    const ids = [session?.user?.email, user.id];
+    ids.sort();
+    router.push(`/messages/${ids.join("-")}`);
+  };
+
   return (
     <>
       <div className={style.header}>
@@ -257,23 +274,36 @@ export default function UserInfo({ username, session }: Props) {
       <div className={style.userZone}>
         <div className={style.userRow}>
           <div className={style.userImage}>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={user.image} alt={user.id} />
           </div>
           <div className={style.userName}>
             <div>{user.nickname}</div>
             <div>@{user.id}</div>
           </div>
-          {session && session.user?.email !== username && (
-            <button
-              onClick={onFollow}
-              className={cx(style.followButton, followed && style.followed)}
-            >
-              {followed ? "팔로잉" : "팔로우"}
-            </button>
+          {user.id !== session?.user?.email && (
+            <>
+              <button onClick={onMessage} className={style.messageButton}>
+                <svg
+                  viewBox="0 0 24 24"
+                  width={18}
+                  aria-hidden="true"
+                  className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03"
+                >
+                  <g>
+                    <path d="M1.998 5.5c0-1.381 1.119-2.5 2.5-2.5h15c1.381 0 2.5 1.119 2.5 2.5v13c0 1.381-1.119 2.5-2.5 2.5h-15c-1.381 0-2.5-1.119-2.5-2.5v-13zm2.5-.5c-.276 0-.5.224-.5.5v2.764l8 3.638 8-3.636V5.5c0-.276-.224-.5-.5-.5h-15zm15.5 5.463l-8 3.636-8-3.638V18.5c0 .276.224.5.5.5h15c.276 0 .5-.224.5-.5v-8.037z"></path>
+                  </g>
+                </svg>
+              </button>
+              <button
+                onClick={onFollow}
+                className={cx(style.followButton, followed && style.followed)}
+              >
+                {followed ? "팔로잉" : "팔로우"}
+              </button>
+            </>
           )}
         </div>
-        <div className={style.followZone}>
+        <div className={style.userFollower}>
           <div>{user._count.Followers} 팔로워</div>
           &nbsp;
           <div>{user._count.Followings} 팔로우 중</div>

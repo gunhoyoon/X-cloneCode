@@ -1,28 +1,25 @@
 "use client";
 
-import style from "@/app/(afterLogin)/messages/messages.module.css";
-import { faker } from "@faker-js/faker";
+import style from "@/app/(afterLogin)/messages/message.module.css";
 import dayjs from "dayjs";
 import { useRouter } from "next/navigation";
 import relativeTime from "dayjs/plugin/relativeTime";
 import "dayjs/locale/ko";
+import { Room } from "@/model/Room";
 
 dayjs.locale("ko");
 dayjs.extend(relativeTime);
 // dayjs 사용 시 , 페이지마다 사용해줘야함 locale , extend
-export default function Room() {
+
+type Props = {
+  room: Room;
+};
+export default function Room({ room }: Props) {
+  console.log(room);
   const router = useRouter();
-  const user = {
-    id: "hero",
-    nickname: "영웅",
-    Messages: [
-      { roomId: 123, content: "안녕하세요.", createdAt: new Date() },
-      { roomId: 123, content: "안녕히가세요.", createdAt: new Date() },
-    ],
-  };
 
   const onClick = () => {
-    router.push(`/messages/${user.Messages.at(-1)?.roomId}`);
+    router.push(`/messages/${room.room}`);
     // user.Messages.at(-1)? 을 평가해서 해당 객체가 있다면 , 그 id로 이동하겠다.
   };
 
@@ -30,20 +27,20 @@ export default function Room() {
     <div className={style.room} onClickCapture={onClick}>
       <div className={style.roomUserImage}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={faker.image.avatar()} alt="" />
+        <img src={room?.Receiver.image} alt="" />
       </div>
       <div className={style.roomChatInfo}>
         <div className={style.roomUserInfo}>
-          <b>{user.nickname}</b>
+          <b>{room.Receiver.nickname}</b>
           &nbsp;
-          <span>@{user.id}</span>
+          <span>@{room.Receiver.id}</span>
           &nbsp; · &nbsp;
           <span className={style.postDate}>
-            {dayjs(user.Messages?.at(-1)?.createdAt).fromNow(true)}
+            {dayjs(room.createdAt).fromNow(true)}
           </span>
         </div>
         <div className={style.roomLastChat}>
-          {user.Messages?.at(-1)?.content}
+          {room.Receiver.nickname}
           {/* at(-1)은 채팅방의 경우 리스트에서 볼 때 가장 마지막에 보낸 대화가 보여지기 때문에 그 배열의 마지막을 보여지게하기 위해서 사용 */}
         </div>
       </div>

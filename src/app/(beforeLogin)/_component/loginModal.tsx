@@ -25,6 +25,7 @@ export default function LoginModal() {
     if (response?.error === "CredentialsSignin") {
       setMessage("아이디와 비밀번호가 일치하지 않습니다.");
     } else {
+      router.refresh();
       router.replace("/home");
     }
     // 진단 파악 , 비슷한 이슈 찾아보기

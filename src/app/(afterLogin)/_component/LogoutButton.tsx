@@ -1,5 +1,5 @@
 "use client";
-import { signOut, useSession } from "next-auth/react";
+import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import style from "./logoutButton.module.css";
 import { Session } from "@auth/core/types";
@@ -34,15 +34,15 @@ export default function LogoutButton({ me }: Props) {
           method: "post",
           credentials: "include",
         });
-        // 백엔드쪽에서도 완전히 로그아웃(쿠키 삭제), 클라이언트쪽에선 signOut이 하면 클라이언트 쿠키 삭제해줌
-        // const handleLogout = async () => {
-        //   // 사용자 정의 쿠키 제거
-        //   document.cookie = 'myCustomCookie=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
 
-        //   // NextAuth.js 로그아웃
-        //   await signOut({ redirect: false });
-        // }; 예시
-        router.refresh();
+        //  이게 동작을 안하는데 왜 그런지, Route Cache 를 막기 위함이고, 해당 기능은 클라이언트 환경에서만 이루어짐
+        // (클라이언트 측) route cache 자체가 컴포넌트 단위로 저장함
+        // router.refresh 를 사용하면 라우터 캐시가 무효화되고, 서버에 새로운 요청이 생성된다.
+        // console.log("me?.user", me?.user);
+        if (1) {
+          // router.refresh();
+          window.location.reload();
+        }
         router.replace("/");
       });
   };
@@ -67,3 +67,12 @@ export default function LogoutButton({ me }: Props) {
     </button>
   );
 }
+
+// 백엔드쪽에서도 완전히 로그아웃(쿠키 삭제), 클라이언트쪽에선 signOut이 하면 클라이언트 쿠키 삭제해줌
+// const handleLogout = async () => {
+//   // 사용자 정의 쿠키 제거
+//   document.cookie = 'myCustomCookie=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+
+//   // NextAuth.js 로그아웃
+//   await signOut({ redirect: false });
+// }; 예시

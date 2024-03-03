@@ -51,6 +51,7 @@
   width: 134px;
   height: 134px;
   border: 1px solid lightgray;
+  overflow: hidden;
 }
 .userImage img {
   width: 134px;
